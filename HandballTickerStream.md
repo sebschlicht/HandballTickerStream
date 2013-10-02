@@ -1,62 +1,95 @@
 # HandballTickerStream
 
-A handball ticker stream holds information about the current progress of a match.  
-This includes the current game time, the half time the game is in and information about the two match partner with their match scores for the first and second half.   
-In addition the stream consists of items representing a events that happened during this match.
+A handball ticker stream holds information about the current progress of a match and consists of items representing events that happened during this match and other updates the hoster wants to publish.
 
     {
     	"time": {
     	    "minute": "36",
-    	    "half": "2"
+    	    "phase": "second"
     	},
-    	"teams": [
-    	    {
-    	        "role": "home",
-    		    "id": "1",
-    		    "name": "Dixie Lions",
-    		    "score": "21"
-    		},
-    		{
-    		    "role": "guest",
-    		    "id": "2",
-    		    "name": "Ragers",
-    		    "score": "22"
-    		}
-    	],
-    	"scores": [
-    	    {
-    	        "name": "first",
-    	        "teams": [
-    	            {
-    	                "id": "1",
-    	                "score": "19"
-    	            },
-    	            {
-    	                "id": "2",
-    	                "score": "22"
-    	            }
-    	        ]
+    	"home": {
+    	    "id": "1",
+            "name": "HSV Schienbeinknacker",
+            "logo": "http://hsvschienbeinknacker.de/logo.png"
+    	},
+    	"guest": {
+    	    "id": "34",
+    	    "name": "TV Gummibären",
+    	    "logo": "http://tvgummibaeren.de/logo.jpg"
+    	}
+    	"scores": {
+    	    "first": {
+    	        // TODO: INSERT Score
+    	    },
+    	    "second": {
+    	        // TODO: INSERT Score
     	    }
-    	],
+    	},
         "items": [
         	{
-        	    // stream item
-        	    ...
-        	},
-        	{
-        	    // stream item
-        	    ...
+        	    // TODO: INSERT ScoreItem
         	},
         	...
         ]
     }
 
-| Field        | Necessary | Type                                        | Description |
-| ------------ |:---------:|:-------------------------------------------:|
+| Field        | Necessary          | Type                               | Description |
+| ------------ |:------------------:|:----------------------------------:| ----------- |
 | time         | Yes                | [Object: Time](TODO)               | Specifies the current match time. |
-| teams        | Yes                | List of [object: Team](TODO)       | Lists all teams involved in the match being streamed. |
-| scores       | Yes (can be empty) | List of [object: Score](TODO)      | Lists saved scores representing intermediary or final results. |
+| home         | Yes                | [Object: Team](TODO)               | Specifies the home team. |
+| guest        | Yes                | [Object: Team](TODO)               | Specifies the guest team. |
+| scores       | Yes                | [Object: Scores](TODO)             | Lists the current score and all previous intermediate scores. |
 | items        | Yes (can be empty) | List of [object: StreamItem](TODO) | Lists all stream items representing any update. |
+
+## Time
+
+    {
+        "minute": "36",
+        "phase": "second"
+    }
+
+### Fields
+* minute: minute of the match
+* phase: match phase, valid values below
+
+### Match Phases
+* warmup: match has not been started yet
+* first: match is in first half
+* paused: match is paused
+* half-time: match is paused due to the end of the first half
+* second: match is in second half
+* finished: match has been finished
+
+## Team
+
+    {
+        "id": "1",
+        "name": "HSV Schienbeinknacker",
+        "logo": "http://hsvschienbeinknacker.de/logo.png"
+    }
+
+### Fields
+* id: unique team identifier
+* name: team name
+* logo: URL to the team logo
+
+## Scores
+
+    {
+        "first": {
+            // TODO: INSERT Score
+        },
+        "second": {
+            // TODO: INSERT Score
+        }
+    }
+
+## Score
+
+    {
+        "home": "22",
+        "guest": "21"
+    }
 
 ## Stream item
 
