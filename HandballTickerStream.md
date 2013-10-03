@@ -48,15 +48,16 @@ A handball ticker stream holds information about the current progress of a match
         "phase": "second"
     }
 
-### Fields
-* minute: minute of the match
-* phase: match phase, valid values below
+| Field  | Necessary | Type   |  Description |
+| ------ |:---------:|:------:| ------------ |
+| minute | Yes       | int    | Specifies the minute of the match. |
+| phase  | Yes       | String | Specifies the phase the match is in.  Valid values below. |
 
 ### Match Phases
 * warmup: match has not been started yet
 * first: match is in first half
 * paused: match is paused
-* half-time: match is paused due to the end of the first half
+* half-time: match is paused due to half time
 * second: match is in second half
 * finished: match has been finished
 
@@ -83,6 +84,9 @@ A handball ticker stream holds information about the current progress of a match
             // TODO: INSERT Score
         }
     }
+
+
+
 
 ## Score
 
