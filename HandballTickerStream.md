@@ -33,14 +33,14 @@ A handball ticker stream holds information about the current progress of a match
         ]
     }
 
-| Field        | Necessary | Type                                    | Description |
-| ------------ | --------- | --------------------------------------- | ----------- |
-| time         | Yes       | [Object: MatchTime](TODO)               | Specifies the current match time. |
-| home         | Yes       | [Object: Team](TODO)                    | Specifies the home team. |
-| guest        | Yes       | [Object: Team](TODO)                    | Specifies the guest team. |
-| first        | Yes       | [Object: Score](TODO)                   | Specifies the score of the teams in the first half. |
-| second       | **No**    | [Object: Score](TODO)                   | Specifies the score of the teams in the second half - if reached yet. |
-| items        | **No**    | List of [object: StreamItem](TODO)      | Lists all stream items representing updates - if any existing. |
+| Field        | Necessary | Type                                           | Description |
+| ------------ | --------- | ---------------------------------------------- | ----------- |
+| time         | Yes       | [Object: MatchTime](#matchtime)                | Specifies the current match time. |
+| home         | Yes       | [Object: Team](#team)                          | Specifies the home team. |
+| guest        | Yes       | [Object: Team](#team)                          | Specifies the guest team. |
+| first        | Yes       | [Object: Score](#score)                        | Specifies the score of the teams in the first half. |
+| second       | **No**    | [Object: Score](#score)                        | Specifies the score of the teams in the second half - if reached yet. |
+| items        | **No**    | List of [object: StreamItem](#streamitem)      | Lists all stream items representing updates - if any existing. |
 
 ## MatchTime
 
@@ -52,7 +52,7 @@ A handball ticker stream holds information about the current progress of a match
 | Field  | Necessary | Type               |  Description |
 | ------ | --------- | ------------------ | ------------ |
 | minute | Yes       | int                | Specifies the minute of the match. |
-| phase  | Yes       | [MatchPhase](TODO) | Specifies the phase the match is in.  Valid values below. |
+| phase  | Yes       | [MatchPhase](TODO) | Specifies the phase the match is in. |
 
 ### Match Phases
 * warmup: match has not been started yet
@@ -111,12 +111,10 @@ This specific data is specified in `object`.
 | --------- | --------- | ------------------------- | ----------- |
 | published | Yes       | String (DateTime)         | Specifies the exact time the item has been published. |
 | time      | Yes       | [Object: MatchTime](TODO) | Specifies the match time the item has been published. This is considered to be the time the event happened. |
-| type      | Yes       | [StreamItemType](TODO)    | Specifies the type of the item. Valid values below. |
+| type      | Yes       | [StreamItemType](TODO)    | Specifies the type of the item. |
 | object    | Yes       | <Type>Item                | Holds stream item type specific data. |
 
 ### Stream item types
-
-There are several types for stream items:
 * [phase-end](TODO): a match phase has been finished
 * [text](TODO): text message to viewers, no event happened necessarily
 * [score](TODO): a player scored
@@ -148,11 +146,11 @@ The type of the stream item has to be `phase-end` so it will be considered a mat
 | ------- | ----------------------------- | --------------------- | ----------- |
 | before  | Yes                           | [MatchPhase](TODO)       | Specifies the phase that ended. |
 | after   | Yes                           | [MatchPhase](TODO)       | Specifies the new phase that begun. |
-| subType | **No**                        | [PhaseEndSubType](TODO)  | Specifies the sub type of the phase end - if any sub type applies. Valid values below. |
+| subType | **No**                        | [PhaseEndSubType](TODO)  | Specifies the sub type of the phase end - if any sub type applies. |
 | object  | Yes if sub type **is set**    | <SubType>PhaseEndItem    | Holds phase end sub type specific data. |
 | message | **No**                        | String                   | Text message that will be displayed instead of a generated value. |
 
-#### Phase ends allowed:
+#### Match phase combinations allowed:
 
 | Before    | After     | Meaning |
 | --------- | --------- | ------- |
@@ -168,9 +166,8 @@ The type of the stream item has to be `phase-end` so it will be considered a mat
 #### Phase end sub types
 * timeout: pause due to a timeout
 * injury: pause due to an injury of a player
+
  
-
-
 #### TimeoutPhaseEndItem
 
 The sub type of the phase end item has to be `timeout` so it will be considered a phase end due to a timeout.
@@ -187,7 +184,9 @@ The sub type of the phase end item has to be `timeout` so it will be considered 
 | ----- | --------- | ---------------- | ----------- |
 | team  | Yes       | [TeamRole](TODO) | Specifies the role of the team that used its timeout. |
 
-
+#### Team roles
+* home: team marked and set as home team in the stream
+* guest: team marked and set as guest team in the stream
 
 #### InjuryPhaseEndItem
 
@@ -257,10 +256,6 @@ The type of the stream item has to be `score` so it will be considered a signal 
 | player  | **No**    | [Object: Player](TODO) | Specifies the player who scored - if known. |
 | message | **No**    | String                 | Text message that will be displayed instead of a generated value. |
 
-#### Team roles
-* home: team marked and set as home team in the stream
-* guest: team marked and set as guest team in the stream
-
 #### Scoring types
 * normal: no special kind of scoring
 * rush: scoring due to a rush
@@ -294,7 +289,7 @@ The type of the stream item has to be `foul` so it will be considered a signal f
 | Field       | Necessary | Type                       | Description |
 | ----------- | --------- | -------------------------- | ----------- |
 | player      | Yes       | [Object: Player](TODO)     | Specifies the player who fouled. |
-| disciplines | **No**    | List of [Discipline](TODO) | Lists all disciplines for this player - if any. Valid values below. |
+| disciplines | **No**    | List of [Discipline](TODO) | Lists all disciplines for this player - if any. |
 | victim      | **No**    | [Object: Player](TODO)     | Specifies the player who has been fouled - if known. |
 | message     | **No**    | String                     | Text message that will be displayed instead of a generated value. |
 
