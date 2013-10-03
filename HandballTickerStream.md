@@ -115,10 +115,10 @@ This specific data is specified in `object`.
 | object    | Yes       | <Type>Item                           | Holds stream item type specific data. |
 
 ### Stream item types
-* [phase-end](TODO): a match phase has been finished
-* [text](TODO): text message to viewers, no event happened necessarily
-* [score](TODO): a player scored
-* [foul](TODO): a player fouled
+* [phase-end](#phaseenditem): a match phase has been finished
+* [text](#textitem): text message to viewers, no event happened necessarily
+* [score](#scoreitem): a player scored
+* [foul](#foulitem): a player fouled
 
 
 
@@ -164,8 +164,8 @@ The type of the stream item has to be `phase-end` so it will be considered a mat
 | second    | finished  | Match finished |
 
 #### Phase end sub types
-* timeout: pause due to a timeout
-* injury: pause due to an injury of a player
+* [timeout](#timeoutphaseenditem): pause due to a timeout
+* [injury](#injuryphaseenditem): pause due to an injury of a player
 
  
 #### TimeoutPhaseEndItem
@@ -286,12 +286,12 @@ The type of the stream item has to be `foul` so it will be considered a signal f
         }
     }
 
-| Field       | Necessary | Type                              | Description |
-| ----------- | --------- | --------------------------------- | ----------- |
-| player      | Yes       | [Object: Player](TODO)            | Specifies the player who fouled. |
-| disciplines | **No**    | List of [Discipline](#discipline) | Lists all disciplines for this player - if any. |
-| victim      | **No**    | [Object: Player](TODO)            | Specifies the player who has been fouled - if known. |
-| message     | **No**    | String                            | Text message that will be displayed instead of a generated value. |
+| Field       | Necessary | Type                               | Description |
+| ----------- | --------- | ---------------------------------- | ----------- |
+| player      | Yes       | [Object: Player](TODO)             | Specifies the player who fouled. |
+| disciplines | **No**    | List of [Discipline](#disciplines) | Lists all disciplines for this player - if any. |
+| victim      | **No**    | [Object: Player](TODO)             | Specifies the player who has been fouled - if known. |
+| message     | **No**    | String                             | Text message that will be displayed instead of a generated value. |
 
 #### Disciplines
 * time: a simple time discipline
