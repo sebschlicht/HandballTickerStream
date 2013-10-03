@@ -27,7 +27,27 @@ A handball ticker stream holds information about the current progress of a match
     	},
         "items": [
         	{
-        	    // TODO: INSERT ScoreItem
+        	    "published": "2013-10-02 11:52:34",
+                "time": {
+                    "minute": "35",
+                    "phase": "second"
+                },
+                "type": "score",
+                "object": {
+                    "score": {
+                        "home": "21",
+                        "guest": "22"
+                    },
+                    "team": "home",
+                    "type": "normal",
+                    "player": {
+                        "id": "12",
+                        "number": "1",
+                        "name": "Mr. T",
+                        "team": "home"
+                    }
+                },
+                "message": "The 21st goal of Mr. T!"
         	},
         	...
         ]
@@ -98,8 +118,8 @@ This specific data is specified in `object`.
     {
         "published": "2013-10-02 11:52:34",
         "time": {
-            "minute": "21",
-            "half": "1"
+            "minute": "35",
+            "phase": "second"
         },
         "type": "score",
         "object": {
@@ -135,7 +155,10 @@ The type of the stream item has to be `phase-end` so it will be considered a mat
             "subType": "injury",
             "object": {
                 "player": {
-                    // TODO: INSERT Player
+                    "id": "12",
+                    "number": "1",
+                    "name": "Mr. T",
+                    "team": "home"
                 }
             }
             "message": "Mr. T threw a player through the goal..."
@@ -197,15 +220,33 @@ The sub type of the phase end item has to be `injury` so it will be considered a
         "subType": "injury",
         "object": {
             "player": {
-                // TODO: INSERT Player
+                "id": "12",
+                "number": "1",
+                "name": "Mr. T",
+                "team": "home"
             }
         }
     }
 
-| Field  | Necessary | Type                   | Description |
-| ------ | --------- | ---------------------- | ----------- |
-| player | Yes       | [Object: Player](TODO) | Specifies the player that was injured. |
+| Field  | Necessary | Type                      | Description |
+| ------ | --------- | ------------------------- | ----------- |
+| player | Yes       | [Object: Player](#player) | Specifies the player that was injured. |
 
+#### Player
+
+    {
+         "id": "12",
+         "number": "1",
+         "name": "Mr. T",
+         "team": "home"
+    }
+
+| Field  | Necessary | Type                    | Description |
+| ------ | --------- | ----------------------- | ----------- |
+| id     | **No**    | int                     | Specifies the unique player identifier - if player is in the system. |
+| number | Yes       | int                     | Specifies the player number used in the match. |
+| name   | **No**    | String                  | Specifies the real name - if known. |
+| team   | Yes       | [TeamRole](#team-roles) | Specifies the role of the team the player is playing for. |
 
 
 
@@ -242,7 +283,10 @@ The type of the stream item has to be `score` so it will be considered a signal 
             "team": "home",
             "type": "normal",
             "player": {
-                // TODO: INSERT Player
+                "id": "12",
+                "number": "1",
+                "name": "Mr. T",
+                "team": "home"
             },
             "message": "The 21st goal of Mr. T!"
         }
@@ -253,7 +297,7 @@ The type of the stream item has to be `score` so it will be considered a signal 
 | score   | Yes       | [Object: Score](#score)       | Specifies the score of teams after the scoring. |
 | team    | Yes       | [TeamRole](#team-roles)       | Specifies the role of the team scored. |
 | type    | Yes       | [ScoringType](#scoring-types) | Specifies the type of the scoring. |
-| player  | **No**    | [Object: Player](TODO)        | Specifies the player who scored - if known. |
+| player  | **No**    | [Object: Player](#player)     | Specifies the player who scored - if known. |
 | message | **No**    | String                        | Text message that will be displayed instead of a generated value. |
 
 #### Scoring types
@@ -272,7 +316,10 @@ The type of the stream item has to be `foul` so it will be considered a signal f
         "type": "foul",
         "object": {
             "player": {
-                // TODO: INSERT Player
+                "id": "12",
+                "number": "1",
+                "name": "Mr. T",
+                "team": "home"
             },
             "disciplines": [
                 "time",
@@ -280,7 +327,10 @@ The type of the stream item has to be `foul` so it will be considered a signal f
                 "red"
             ],
             "victim": {
-            	// TODO: INSERT Player
+            	"id": "12",
+                "number": "1",
+                "name": "Mr. T",
+                "team": "home"
             },
             "message": "Mr. T crushed another bone..."
         }
@@ -288,9 +338,9 @@ The type of the stream item has to be `foul` so it will be considered a signal f
 
 | Field       | Necessary | Type                               | Description |
 | ----------- | --------- | ---------------------------------- | ----------- |
-| player      | Yes       | [Object: Player](TODO)             | Specifies the player who fouled. |
+| player      | Yes       | [Object: Player](#player)          | Specifies the player who fouled. |
 | disciplines | **No**    | List of [Discipline](#disciplines) | Lists all disciplines for this player - if any. |
-| victim      | **No**    | [Object: Player](TODO)             | Specifies the player who has been fouled - if known. |
+| victim      | **No**    | [Object: Player](#player)          | Specifies the player who has been fouled - if known. |
 | message     | **No**    | String                             | Text message that will be displayed instead of a generated value. |
 
 #### Disciplines
