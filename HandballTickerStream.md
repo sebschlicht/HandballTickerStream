@@ -40,7 +40,7 @@ A handball ticker stream holds information about the current progress of a match
     }
 
 | Field        | Necessary          | Type                                    | Description |
-| ------------ |:------------------:|:---------------------------------------:| ----------- |
+| ------------ | ------------------ | --------------------------------------- | ----------- |
 | time         | Yes                | [Object: MatchTime](TODO)               | Specifies the current match time. |
 | home         | Yes                | [Object: Team](TODO)                    | Specifies the home team. |
 | guest        | Yes                | [Object: Team](TODO)                    | Specifies the guest team. |
@@ -54,10 +54,10 @@ A handball ticker stream holds information about the current progress of a match
         "phase": "second"
     }
 
-| Field  | Necessary | Type   |  Description |
-| ------ |:---------:|:------:| ------------ |
-| minute | Yes       | int    | Specifies the minute of the match. |
-| phase  | Yes       | String | Specifies the phase the match is in.  Valid values below. |
+| Field  | Necessary | Type                |  Description |
+| ------ | --------- | ------------------- | ------------ |
+| minute | Yes       | int                 | Specifies the minute of the match. |
+| phase  | Yes       | String (MatchPhase) | Specifies the phase the match is in.  Valid values below. |
 
 ### Match Phases
 * warmup: match has not been started yet
@@ -76,7 +76,7 @@ A handball ticker stream holds information about the current progress of a match
     }
 
 | Field | Necessary | Type         | Description |
-| ----- |:---------:|:------------:| ----------- |
+| ----- | --------- | ------------ | ----------- |
 | id    | Yes       | int          | Specifies the unique team identifier. |
 | name  | Yes       | String       | Specifies the team name displayed. |
 | logo  | **No**    | String (URL) | Specifies the URL to the team logo displayed if available. |
@@ -99,7 +99,7 @@ A handball ticker stream holds information about the current progress of a match
     }
 
 | Field  | Necessary | Type                  | Description |
-| ------ |:---------:|:---------------------:| ----------- |
+| ------ | --------- | --------------------- | ----------- |
 | first  | Yes       | [Object: Score](TODO) | Specifies the score of the teams in the first half. |
 | second | **No**    | [Object: Score](TODO) | Specifies the score of the teams in the second half if reached yet. |
 
@@ -112,7 +112,7 @@ A handball ticker stream holds information about the current progress of a match
     }
 
 | Field | Necessary | Type | Description |
-| ----- |:---------:|:----:| ----------- |
+| ----- | --------- | ---- | ----------- |
 | home  | Yes       | int  | Specifies the score of the home team. |
 | guest | Yes       | int  | Specifies the score of the guest team. |
 
@@ -134,7 +134,7 @@ This specific data is specified in `object`.
     }
 
 | Field     | Necessary | Type                      | Description |
-| --------- |:---------:|:-------------------------:| ----------- |
+| --------- | --------- | ------------------------- | ----------- |
 | published | Yes       | String (DateTime)         | Specifies the exact time the item has been published. |
 | time      | Yes       | [Object: MatchTime](TODO) | Specifies the match time the item has been published. This is considered to be the time the event happened. |
 | type      | Yes       | String                    | Specifies the type of the item. Valid values below. |
@@ -142,12 +142,40 @@ This specific data is specified in `object`.
 
 ### Types
 
-There are several types for stream objects:
-* [phase-end](TODO): the current phase has been finished
-* [text](TODO): text message to streamers, no event happened necessarily
+There are several types for stream items:
+* [phase-end](TODO): a match phase has been finished
+* [text](TODO): text message to viewers, no event happened necessarily
 * [score](TODO): a player scored
 * [foul](TODO): a player fouled
-* [break](TODO): a team took a break
+
+### PhaseEndItem
+
+The type has to be `phase-end` so the stream item will be considered a match phase end.
+
+    {
+        "before": "paused",
+        "after": "second",
+        "comment": "Mr. T put the two players back on the ground, the match goes on..."
+    }
+
+| Field   | Necessary | Type                | Description |
+| ------- | --------- | ------------------- | ----------- |
+| before  | Yes       | String (MatchPhase) | Specifies the phase that ended. |
+| after   | Yes       | String (MatchPhase) | Specifies the new phase that begun. |
+| comment | **No**    | String              | Text message that will be displayed instead of a generated value. |
+
+#### Possible phase ends:
+
+| Before    | After     | Meaning |
+| --------- | --------- | ------- |
+| warmup    | first     | Match started |
+| first     | paused    | Match paused during first half |
+| paused    | first     | Match unpaused during first half |
+| first     | half-time | Half time |
+| half-time | second    | Second half of the match started |
+| second    | paused    | Match paused during second half |
+| paused    | second    | Match unpaused during second half |
+| second    | finished  | Match finished |
 
 ### TextItem
 
@@ -162,7 +190,7 @@ The type has to be `text` so the stream item will be considered a simple update 
     }
 
 | Field   | Necessary | Type   | Description |
-| ------- |:---------:|:------:| ----------- |
+| ------- | --------- | ------ | ----------- |
 | message | Yes       | String | Text message that will be displayed. |
 
 # TODO
