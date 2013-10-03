@@ -74,7 +74,7 @@ A handball ticker stream holds information about the current progress of a match
 | ----- | --------- | ------------ | ----------- |
 | id    | Yes       | int          | Specifies the unique team identifier. |
 | name  | Yes       | String       | Specifies the team name displayed. |
-| logo  | **No**    | String (URL) | Specifies the URL to the team logo displayed if available. |
+| logo  | **No**    | String (URL) | Specifies the URL to the team logo displayed - if available. |
 
 
 
@@ -138,7 +138,7 @@ The type has to be `phase-end` so the stream item will be considered a match pha
 | ------- | --------- | ------------------- | ----------- |
 | before  | Yes       | String (MatchPhase) | Specifies the phase that ended. |
 | after   | Yes       | String (MatchPhase) | Specifies the new phase that begun. |
-| comment | **No**    | String              | Text message that will be displayed instead of a generated value. |
+| message | **No**    | String              | Text message that will be displayed instead of a generated value. |
 
 #### Possible phase ends:
 
@@ -201,8 +201,8 @@ The type has to be `score` so the stream item will be considered a signal for: A
 | score   | Yes       | [Object: Score](TODO)  | Specifies the score of teams after the scoring. |
 | team    | Yes       | String (TeamRole)      | Specifies the role of the team scored. Valid values below. |
 | type    | Yes       | String (ScoreType)     | Specifies the type of the scoring. Valid values below. |
-| player  | **No**    | [Object: Player](TODO) | Specifies the player who scored if known. |
-| comment | **No**    | String                 | Text message that will be displayed instead of a generated value. |
+| player  | **No**    | [Object: Player](TODO) | Specifies the player who scored - if known. |
+| message | **No**    | String                 | Text message that will be displayed instead of a generated value. |
 
 #### Team roles
 * home: team marked and set as home team in the stream
@@ -241,9 +241,9 @@ The type has to be `foul` so the stream item will be considered a signal for: A 
 | Field       | Necessary | Type                        | Description |
 | ----------- | --------- | --------------------------- | ----------- |
 | player      | Yes       | [Object: Player](TODO)      | Specifies the player who fouled. |
-| disciplines | **No**    | List of String (Discipline) | Lists all disciplines for this player if any. Valid values below. |
-| victim      | **No**    | [Object: Player](TODO)      | Specifies the player who has been fouled if known. |
-| comment     | **No**    | String                      | Text message that will be displayed instead of a generated value. |
+| disciplines | **No**    | List of String (Discipline) | Lists all disciplines for this player - if any. Valid values below. |
+| victim      | **No**    | [Object: Player](TODO)      | Specifies the player who has been fouled - if known. |
+| message     | **No**    | String                      | Text message that will be displayed instead of a generated value. |
 
 #### Disciplines
 * time: a simple time discipline
