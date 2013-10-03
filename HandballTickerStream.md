@@ -39,13 +39,13 @@ A handball ticker stream holds information about the current progress of a match
         ]
     }
 
-| Field        | Necessary          | Type                                    | Description |
-| ------------ | ------------------ | --------------------------------------- | ----------- |
-| time         | Yes                | [Object: MatchTime](TODO)               | Specifies the current match time. |
-| home         | Yes                | [Object: Team](TODO)                    | Specifies the home team. |
-| guest        | Yes                | [Object: Team](TODO)                    | Specifies the guest team. |
-| scores       | Yes                | [Object: Scores](TODO)                  | Lists the current score and all previous intermediate scores. |
-| items        | Yes (can be empty) | List of [object: StreamItem](TODO)      | Lists all stream items representing any update. |
+| Field        | Necessary | Type                                    | Description |
+| ------------ | --------- | --------------------------------------- | ----------- |
+| time         | Yes       | [Object: MatchTime](TODO)               | Specifies the current match time. |
+| home         | Yes       | [Object: Team](TODO)                    | Specifies the home team. |
+| guest        | Yes       | [Object: Team](TODO)                    | Specifies the guest team. |
+| scores       | Yes       | [Object: Scores](TODO)                  | Lists the current score and all previous intermediate scores. |
+| items        | **No**    | List of [object: StreamItem](TODO)      | Lists all stream items representing updates if any. |
 
 ## MatchTime
 
@@ -137,16 +137,18 @@ This specific data is specified in `object`.
 | --------- | --------- | ------------------------- | ----------- |
 | published | Yes       | String (DateTime)         | Specifies the exact time the item has been published. |
 | time      | Yes       | [Object: MatchTime](TODO) | Specifies the match time the item has been published. This is considered to be the time the event happened. |
-| type      | Yes       | String                    | Specifies the type of the item. Valid values below. |
+| type      | Yes       | String (StreamItemType)   | Specifies the type of the item. Valid values below. |
 | object    | Yes       | <Type>Item                | Holds stream item type specific data. |
 
-### Types
+### Stream item types
 
 There are several types for stream items:
 * [phase-end](TODO): a match phase has been finished
 * [text](TODO): text message to viewers, no event happened necessarily
 * [score](TODO): a player scored
 * [foul](TODO): a player fouled
+
+
 
 ### PhaseEndItem
 
@@ -155,7 +157,7 @@ The type has to be `phase-end` so the stream item will be considered a match pha
     {
         "before": "paused",
         "after": "second",
-        "comment": "Mr. T put the two players back on the ground, the match goes on..."
+        "comment": "Mr. T let down the two players he lifted up before, the match goes on..."
     }
 
 | Field   | Necessary | Type                | Description |
@@ -177,6 +179,10 @@ The type has to be `phase-end` so the stream item will be considered a match pha
 | paused    | second    | Match unpaused during second half |
 | second    | finished  | Match finished |
 
+# TODO: specific phase end items: hurts, timeouts
+
+
+
 ### TextItem
 
 The type has to be `text` so the stream item will be considered a simple update message.
@@ -193,7 +199,7 @@ The type has to be `text` so the stream item will be considered a simple update 
 | ------- | --------- | ------ | ----------- |
 | message | Yes       | String | Text message that will be displayed. |
 
-# TODO
+
 
 ### ScoreItem
 
@@ -209,33 +215,37 @@ The type has to be `score` so the stream item will be considered a signal for: A
             },
             "team": "home",
             "player": {
-                "id": "12",
-                "number": "12",
-                "name": "Mr. T",
-                "team": "home"
+                // TODO: INSERT Player
             },
-            "message": "The 21st goal of Mr. T!"
+            "comment": "The 21st goal of Mr. T!"
         }
     }
 
-  
-*score* is a object containing the current score of each team.  
-*team* specifies which team scored due to the player's action.  
-*player* holds information about the [player](TODO) scored.  
-The *message* is optional holding a comment.
+| Field   | Necessary | Type                   | Description |
+| ------- | --------- | ---------------------- | ----------- |
+| score   | Yes       | [Object: Score](TODO)  | Specifies the score of teams after the scoring. |
+| team    | Yes       | String (TeamRole)      | Specifies the role of the team scored. Valid values below. |
+| player  | **No**    | [Object: Player](TODO) | Specifies the player who scored if known. |
+| comment | **No**    | String                 | Text message that will be displayed instead of a generated value. |
 
-## Foul object
+#### Team roles
+* home: team marked and set as home team in the stream
+* guest: team marked and set as guest team in the stream
 
-The type has to be `foul` so the object will be considered a foul object signalizing: A player fouled.
+# TODO: add scoring reason: none, 7m, rush
+
+
+
+### FoulItem
+
+The type has to be `foul` so the stream item will be considered a signal for: A player fouled.
 
     {
         ...
         "type": "foul",
         "object": {
             "player": {
-                "id": "12",
-                "number": "12",
-                "name": "Mr. T"
+                // TODO: INSERT Player
             },
             "disciplines": [
                 "time",
@@ -243,31 +253,21 @@ The type has to be `foul` so the object will be considered a foul object signali
                 "red"
             ],
             "victim": {
-            	"id": "154",
-            	"number": "7",
-            	"name": "victim0815"
-            }
+            	// TODO: INSERT Player
+            },
+            "comment": "Mr. T crushed another bone..."
         }
     }
 
-*player* holds information about the [player](TODO) who fouled.  
-*disciplines* holds the list of [disciplines](TODO) for that player.  
-*victim* is optional and holds information about the player who has been fouled.
+| Field       | Necessary | Type                        | Description |
+| ----------- | --------- | --------------------------- | ----------- |
+| player      | Yes       | [Object: Player](TODO)      | Specifies the player who fouled. |
+| disciplines | **No**    | List of String (Discipline) | Lists all disciplines for this player if any. Valid values below. |
+| victim      | **No**    | [Object: Player](TODO)      | Specifies the player who has been fouled if known. |
+| comment     | **No**    | String                      | Text message that will be displayed instead of a generated value. |
 
-### Disciplines
+#### Disciplines
 * time: a simple time discipline
+* penalty: penalty throw for the victim team
 * yellow: yellow card shown by referee
 * red: red card shown by referee
-
-## Break object
-
-The type has to be `break` so the object will be considered a break object signalizing: A team took a break.
-
-    {
-        ...
-        "type": "break",
-        "object": {
-            "team": "home"
-        }
-    }
-
