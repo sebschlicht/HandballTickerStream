@@ -17,19 +17,13 @@ A handball ticker stream holds information about the current progress of a match
     	    "name": "TV Gummibären",
     	    "logo": "http://tvgummibaeren.de/logo.jpg"
     	}
-    	"scores": {
-    	    "first": {
-    	        {
-                    "home": "19",
-                    "guest": "21"
-                }
-    	    },
-    	    "second": {
-    	        {
-                    "home": "22",
-                    "guest": "21"
-                }
-    	    }
+    	"first": {
+            "home": "19",
+            "guest": "21"
+    	},
+    	"second": {
+            "home": "22",
+            "guest": "21"
     	},
         "items": [
         	{
@@ -44,8 +38,9 @@ A handball ticker stream holds information about the current progress of a match
 | time         | Yes       | [Object: MatchTime](TODO)               | Specifies the current match time. |
 | home         | Yes       | [Object: Team](TODO)                    | Specifies the home team. |
 | guest        | Yes       | [Object: Team](TODO)                    | Specifies the guest team. |
-| scores       | Yes       | [Object: Scores](TODO)                  | Lists the current score and all previous intermediate scores. |
-| items        | **No**    | List of [object: StreamItem](TODO)      | Lists all stream items representing updates if any. |
+| first        | Yes       | [Object: Score](TODO)                   | Specifies the score of the teams in the first half. |
+| second       | **No**    | [Object: Score](TODO)                   | Specifies the score of the teams in the second half - if reached yet. |
+| items        | **No**    | List of [object: StreamItem](TODO)      | Lists all stream items representing updates - if any existing. |
 
 ## MatchTime
 
@@ -81,27 +76,6 @@ A handball ticker stream holds information about the current progress of a match
 | name  | Yes       | String       | Specifies the team name displayed. |
 | logo  | **No**    | String (URL) | Specifies the URL to the team logo displayed if available. |
 
-## Scores
-
-    {
-        "first": {
-            {
-                "home": "19",
-                "guest": "21"
-            }
-        },
-        "second": {
-            {
-                "home": "22",
-                "guest": "21"
-            }
-        }
-    }
-
-| Field  | Necessary | Type                  | Description |
-| ------ | --------- | --------------------- | ----------- |
-| first  | Yes       | [Object: Score](TODO) | Specifies the score of the teams in the first half. |
-| second | **No**    | [Object: Score](TODO) | Specifies the score of the teams in the second half if reached yet. |
 
 
 ## Score
@@ -214,6 +188,7 @@ The type has to be `score` so the stream item will be considered a signal for: A
                 "guest": "22"
             },
             "team": "home",
+            "type": "normal",
             "player": {
                 // TODO: INSERT Player
             },
@@ -225,6 +200,7 @@ The type has to be `score` so the stream item will be considered a signal for: A
 | ------- | --------- | ---------------------- | ----------- |
 | score   | Yes       | [Object: Score](TODO)  | Specifies the score of teams after the scoring. |
 | team    | Yes       | String (TeamRole)      | Specifies the role of the team scored. Valid values below. |
+| type    | Yes       | String (ScoreType)     | Specifies the type of the scoring. Valid values below. |
 | player  | **No**    | [Object: Player](TODO) | Specifies the player who scored if known. |
 | comment | **No**    | String                 | Text message that will be displayed instead of a generated value. |
 
@@ -232,7 +208,10 @@ The type has to be `score` so the stream item will be considered a signal for: A
 * home: team marked and set as home team in the stream
 * guest: team marked and set as guest team in the stream
 
-# TODO: add scoring reason: none, 7m, rush
+#### Scoring types
+* normal
+* rush
+* penalty
 
 
 
