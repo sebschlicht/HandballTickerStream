@@ -19,10 +19,16 @@ A handball ticker stream holds information about the current progress of a match
     	}
     	"scores": {
     	    "first": {
-    	        // TODO: INSERT Score
+    	        {
+                    "home": "19",
+                    "guest": "21"
+                }
     	    },
     	    "second": {
-    	        // TODO: INSERT Score
+    	        {
+                    "home": "22",
+                    "guest": "21"
+                }
     	    }
     	},
         "items": [
@@ -33,15 +39,15 @@ A handball ticker stream holds information about the current progress of a match
         ]
     }
 
-| Field        | Necessary          | Type                               | Description |
-| ------------ |:------------------:|:----------------------------------:| ----------- |
-| time         | Yes                | [Object: Time](TODO)               | Specifies the current match time. |
-| home         | Yes                | [Object: Team](TODO)               | Specifies the home team. |
-| guest        | Yes                | [Object: Team](TODO)               | Specifies the guest team. |
-| scores       | Yes                | [Object: Scores](TODO)             | Lists the current score and all previous intermediate scores. |
-| items        | Yes (can be empty) | List of [object: StreamItem](TODO) | Lists all stream items representing any update. |
+| Field        | Necessary          | Type                                    | Description |
+| ------------ |:------------------:|:---------------------------------------:| ----------- |
+| time         | Yes                | [Object: MatchTime](TODO)               | Specifies the current match time. |
+| home         | Yes                | [Object: Team](TODO)                    | Specifies the home team. |
+| guest        | Yes                | [Object: Team](TODO)                    | Specifies the guest team. |
+| scores       | Yes                | [Object: Scores](TODO)                  | Lists the current score and all previous intermediate scores. |
+| items        | Yes (can be empty) | List of [object: StreamItem](TODO)      | Lists all stream items representing any update. |
 
-## Time
+## MatchTime
 
     {
         "minute": "36",
@@ -69,23 +75,33 @@ A handball ticker stream holds information about the current progress of a match
         "logo": "http://hsvschienbeinknacker.de/logo.png"
     }
 
-### Fields
-* id: unique team identifier
-* name: team name
-* logo: URL to the team logo
+| Field | Necessary | Type         | Description |
+| ----- |:---------:|:------------:| ----------- |
+| id    | Yes       | int          | Specifies the unique team identifier. |
+| name  | Yes       | String       | Specifies the team name displayed. |
+| logo  | **No**    | String (URL) | Specifies the URL to the team logo displayed if available. |
 
 ## Scores
 
     {
         "first": {
-            // TODO: INSERT Score
+            {
+                "home": "19",
+                "guest": "21"
+            }
         },
         "second": {
-            // TODO: INSERT Score
+            {
+                "home": "22",
+                "guest": "21"
+            }
         }
     }
 
-
+| Field  | Necessary | Type                  | Description |
+| ------ |:---------:|:---------------------:| ----------- |
+| first  | Yes       | [Object: Score](TODO) | Specifies the score of the teams in the first half. |
+| second | **No**    | [Object: Score](TODO) | Specifies the score of the teams in the second half if reached yet. |
 
 
 ## Score
@@ -94,6 +110,11 @@ A handball ticker stream holds information about the current progress of a match
         "home": "22",
         "guest": "21"
     }
+
+| Field | Necessary | Type | Description |
+| ----- |:---------:|:----:| ----------- |
+| home  | Yes       | int  | Specifies the score of the home team. |
+| guest | Yes       | int  | Specifies the score of the guest team. |
 
 ## Stream item
 
@@ -112,22 +133,25 @@ This specific data is specified in `object`.
         }
     }
 
-*published* holds the exact time the stream object has been published.  
-*game-time* is the game minute when the object has been published.  
-*type* determines the type of the stream object
+| Field     | Necessary | Type                      | Description |
+| --------- |:---------:|:-------------------------:| ----------- |
+| published | Yes       | String (DateTime)         | Specifies the exact time the item has been published. |
+| time      | Yes       | [Object: MatchTime](TODO) | Specifies the match time the item has been published. This is considered to be the time the event happened. |
+| type      | Yes       | String                    | Specifies the type of the item. Valid values below. |
+| object    | Yes       | <Type>Item                | Holds stream item type specific data. |
 
 ### Types
 
 There are several types for stream objects:
+* [phase-end](TODO): the current phase has been finished
 * [text](TODO): text message to streamers, no event happened necessarily
 * [score](TODO): a player scored
 * [foul](TODO): a player fouled
 * [break](TODO): a team took a break
-* [half-time](TODO): the current half-time has been left (half time/match end)
 
-## Text object
+### TextItem
 
-The type has to be `text` so the object will be considered a text object being a simple update message.
+The type has to be `text` so the stream item will be considered a simple update message.
 
     {
         ...
@@ -137,11 +161,15 @@ The type has to be `text` so the object will be considered a text object being a
         }
     }
 
-*message* holds the update message to be displayed.
+| Field   | Necessary | Type   | Description |
+| ------- |:---------:|:------:| ----------- |
+| message | Yes       | String | Text message that will be displayed. |
 
-## Score object
+# TODO
 
-The type has to be `score` so the object will be considered a score object signalizing: A player scored.
+### ScoreItem
+
+The type has to be `score` so the stream item will be considered a signal for: A player scored.
 
     {
         ...
