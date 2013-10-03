@@ -126,12 +126,22 @@ There are several types for stream items:
 
 ### PhaseEndItem
 
-The type has to be `phase-end` so the stream item will be considered a match phase end.
+The type of the stream item has to be `phase-end` so it will be considered a match phase end.
 
     {
-        "before": "paused",
-        "after": "second",
-        "message": "Mr. T let down the two players he lifted up before, the match goes on..."
+        ...
+        "type": "phase-end",
+        "object": {
+            "before": "second",
+            "after": "pause",
+            "subType": "injury",
+            "object": {
+                "player": {
+                    // TODO: INSERT Player
+                }
+            }
+            "message": "Mr. T threw a player through the goal..."
+        }
     }
 
 | Field   | Necessary                     | Type                  | Description |
@@ -163,7 +173,7 @@ The type has to be `phase-end` so the stream item will be considered a match pha
 
 #### TimeoutPhaseEndItem
 
-The sub type has to be `timeout` so the stream item will be considered a phase end due to a timeout.
+The sub type of the phase end item has to be `timeout` so it will be considered a phase end due to a timeout.
 
     {
         ...
@@ -181,7 +191,7 @@ The sub type has to be `timeout` so the stream item will be considered a phase e
 
 #### InjuryPhaseEndItem
 
-The sub type has to be `injury` so the stream item will be considered a phase end due to an injury of a player.
+The sub type of the phase end item has to be `injury` so it will be considered a phase end due to an injury of a player.
 
     {
         ...
@@ -202,7 +212,7 @@ The sub type has to be `injury` so the stream item will be considered a phase en
 
 ### TextItem
 
-The type has to be `text` so the stream item will be considered a simple update message.
+The type of the stream item has to be `text` so it will be considered a simple update message.
 
     {
         ...
@@ -220,7 +230,7 @@ The type has to be `text` so the stream item will be considered a simple update 
 
 ### ScoreItem
 
-The type has to be `score` so the stream item will be considered a signal for: A player scored.
+The type of the stream item has to be `score` so it will be considered a signal for: A player scored.
 
     {
         ...
@@ -260,7 +270,7 @@ The type has to be `score` so the stream item will be considered a signal for: A
 
 ### FoulItem
 
-The type has to be `foul` so the stream item will be considered a signal for: A player fouled.
+The type of the stream item has to be `foul` so it will be considered a signal for: A player fouled.
 
     {
         ...
