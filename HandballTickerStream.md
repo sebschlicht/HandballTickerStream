@@ -131,7 +131,7 @@ The type has to be `phase-end` so the stream item will be considered a match pha
     {
         "before": "paused",
         "after": "second",
-        "comment": "Mr. T let down the two players he lifted up before, the match goes on..."
+        "message": "Mr. T let down the two players he lifted up before, the match goes on..."
     }
 
 | Field   | Necessary | Type                | Description |
@@ -192,7 +192,7 @@ The type has to be `score` so the stream item will be considered a signal for: A
             "player": {
                 // TODO: INSERT Player
             },
-            "comment": "The 21st goal of Mr. T!"
+            "message": "The 21st goal of Mr. T!"
         }
     }
 
@@ -234,7 +234,7 @@ The type has to be `foul` so the stream item will be considered a signal for: A 
             "victim": {
             	// TODO: INSERT Player
             },
-            "comment": "Mr. T crushed another bone..."
+            "message": "Mr. T crushed another bone..."
         }
     }
 
