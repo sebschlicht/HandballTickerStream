@@ -134,13 +134,15 @@ The type has to be `phase-end` so the stream item will be considered a match pha
         "message": "Mr. T let down the two players he lifted up before, the match goes on..."
     }
 
-| Field   | Necessary | Type                | Description |
-| ------- | --------- | ------------------- | ----------- |
-| before  | Yes       | String (MatchPhase) | Specifies the phase that ended. |
-| after   | Yes       | String (MatchPhase) | Specifies the new phase that begun. |
-| message | **No**    | String              | Text message that will be displayed instead of a generated value. |
+| Field   | Necessary | Type                  | Description |
+| ------- | --------- | --------------------- | ----------- |
+| before  | Yes       | String (MatchPhase)      | Specifies the phase that ended. |
+| after   | Yes       | String (MatchPhase)      | Specifies the new phase that begun. |
+| subType | **No**    | String (PhaseEndSubType) | Specifies the sub type of the phase end - if any sub type applies. Valid values below. |
+| object  | **No**    | <SubType>PhaseEndItem    | Holds phase end sub type specific data - if sub type is set. |
+| message | **No**    | String                   | Text message that will be displayed instead of a generated value. |
 
-#### Possible phase ends:
+#### Phase ends allowed:
 
 | Before    | After     | Meaning |
 | --------- | --------- | ------- |
@@ -153,7 +155,11 @@ The type has to be `phase-end` so the stream item will be considered a match pha
 | paused    | second    | Match unpaused during second half |
 | second    | finished  | Match finished |
 
-# TODO: specific phase end items: hurts, timeouts
+#### Phase end sub types
+* timeout
+* hurt
+ 
+## TODO: specify sub type objects
 
 
 
