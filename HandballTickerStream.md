@@ -33,14 +33,14 @@ A handball ticker stream holds information about the current progress of a match
         ]
     }
 
-| Field        | Necessary | Type                                           | Description |
-| ------------ | --------- | ---------------------------------------------- | ----------- |
-| time         | Yes       | [Object: MatchTime](#matchtime)                | Specifies the current match time. |
-| home         | Yes       | [Object: Team](#team)                          | Specifies the home team. |
-| guest        | Yes       | [Object: Team](#team)                          | Specifies the guest team. |
-| first        | Yes       | [Object: Score](#score)                        | Specifies the score of the teams in the first half. |
-| second       | **No**    | [Object: Score](#score)                        | Specifies the score of the teams in the second half - if reached yet. |
-| items        | **No**    | List of [object: StreamItem](#streamitem)      | Lists all stream items representing updates - if any existing. |
+| Field        | Necessary | Type                                            | Description |
+| ------------ | --------- | ----------------------------------------------- | ----------- |
+| time         | Yes       | [Object: MatchTime](#matchtime)                 | Specifies the current match time. |
+| home         | Yes       | [Object: Team](#team)                           | Specifies the home team. |
+| guest        | Yes       | [Object: Team](#team)                           | Specifies the guest team. |
+| first        | Yes       | [Object: Score](#score)                         | Specifies the score of the teams in the first half. |
+| second       | **No**    | [Object: Score](#score)                         | Specifies the score of the teams in the second half - if reached yet. |
+| items        | **No**    | List of [object: StreamItem](#stream-item)      | Lists all stream items representing updates - if any existing. |
 
 ## MatchTime
 
@@ -49,10 +49,10 @@ A handball ticker stream holds information about the current progress of a match
         "phase": "second"
     }
 
-| Field  | Necessary | Type               |  Description |
-| ------ | --------- | ------------------ | ------------ |
-| minute | Yes       | int                | Specifies the minute of the match. |
-| phase  | Yes       | [MatchPhase](TODO) | Specifies the phase the match is in. |
+| Field  | Necessary | Type                        |  Description |
+| ------ | --------- | --------------------------- | ------------ |
+| minute | Yes       | int                         | Specifies the minute of the match. |
+| phase  | Yes       | [MatchPhase](#match-phases) | Specifies the phase the match is in. |
 
 ### Match Phases
 * warmup: match has not been started yet
@@ -107,12 +107,12 @@ This specific data is specified in `object`.
         }
     }
 
-| Field     | Necessary | Type                      | Description |
-| --------- | --------- | ------------------------- | ----------- |
-| published | Yes       | String (DateTime)         | Specifies the exact time the item has been published. |
-| time      | Yes       | [Object: MatchTime](TODO) | Specifies the match time the item has been published. This is considered to be the time the event happened. |
-| type      | Yes       | [StreamItemType](TODO)    | Specifies the type of the item. |
-| object    | Yes       | <Type>Item                | Holds stream item type specific data. |
+| Field     | Necessary | Type                                 | Description |
+| --------- | --------- | ------------------------------------ | ----------- |
+| published | Yes       | String (DateTime)                    | Specifies the exact time the item has been published. |
+| time      | Yes       | [Object: MatchTime](#matchtime)      | Specifies the match time the item has been published. This is considered to be the time the event happened. |
+| type      | Yes       | [StreamItemType](#stream-item-types) | Specifies the type of the item. |
+| object    | Yes       | <Type>Item                           | Holds stream item type specific data. |
 
 ### Stream item types
 * [phase-end](TODO): a match phase has been finished
@@ -142,13 +142,13 @@ The type of the stream item has to be `phase-end` so it will be considered a mat
         }
     }
 
-| Field   | Necessary                     | Type                  | Description |
-| ------- | ----------------------------- | --------------------- | ----------- |
-| before  | Yes                           | [MatchPhase](TODO)       | Specifies the phase that ended. |
-| after   | Yes                           | [MatchPhase](TODO)       | Specifies the new phase that begun. |
-| subType | **No**                        | [PhaseEndSubType](TODO)  | Specifies the sub type of the phase end - if any sub type applies. |
-| object  | Yes if sub type **is set**    | <SubType>PhaseEndItem    | Holds phase end sub type specific data. |
-| message | **No**                        | String                   | Text message that will be displayed instead of a generated value. |
+| Field   | Necessary                     | Type                                    | Description |
+| ------- | ----------------------------- | --------------------------------------- | ----------- |
+| before  | Yes                           | [MatchPhase](#match-phases)             | Specifies the phase that ended. |
+| after   | Yes                           | [MatchPhase](#match-phases)             | Specifies the new phase that begun. |
+| subType | **No**                        | [PhaseEndSubType](#phase-end-sub-types) | Specifies the sub type of the phase end - if any sub type applies. |
+| object  | Yes if sub type **is set**    | <SubType>PhaseEndItem                   | Holds phase end sub type specific data. |
+| message | **No**                        | String                                  | Text message that will be displayed instead of a generated value. |
 
 #### Match phase combinations allowed:
 
@@ -180,9 +180,9 @@ The sub type of the phase end item has to be `timeout` so it will be considered 
         }
     }
 
-| Field | Necessary | Type             | Description |
-| ----- | --------- | ---------------- | ----------- |
-| team  | Yes       | [TeamRole](TODO) | Specifies the role of the team that used its timeout. |
+| Field | Necessary | Type                    | Description |
+| ----- | --------- | ----------------------- | ----------- |
+| team  | Yes       | [TeamRole](#team-roles) | Specifies the role of the team that used its timeout. |
 
 #### Team roles
 * home: team marked and set as home team in the stream
@@ -248,13 +248,13 @@ The type of the stream item has to be `score` so it will be considered a signal 
         }
     }
 
-| Field   | Necessary | Type                   | Description |
-| ------- | --------- | ---------------------- | ----------- |
-| score   | Yes       | [Object: Score](TODO)  | Specifies the score of teams after the scoring. |
-| team    | Yes       | [TeamRole](TODO)       | Specifies the role of the team scored. |
-| type    | Yes       | [ScoreType](TODO)      | Specifies the type of the scoring. |
-| player  | **No**    | [Object: Player](TODO) | Specifies the player who scored - if known. |
-| message | **No**    | String                 | Text message that will be displayed instead of a generated value. |
+| Field   | Necessary | Type                          | Description |
+| ------- | --------- | ----------------------------- | ----------- |
+| score   | Yes       | [Object: Score](#score)       | Specifies the score of teams after the scoring. |
+| team    | Yes       | [TeamRole](#team-roles)       | Specifies the role of the team scored. |
+| type    | Yes       | [ScoringType](#scoring-types) | Specifies the type of the scoring. |
+| player  | **No**    | [Object: Player](TODO)        | Specifies the player who scored - if known. |
+| message | **No**    | String                        | Text message that will be displayed instead of a generated value. |
 
 #### Scoring types
 * normal: no special kind of scoring
@@ -286,12 +286,12 @@ The type of the stream item has to be `foul` so it will be considered a signal f
         }
     }
 
-| Field       | Necessary | Type                       | Description |
-| ----------- | --------- | -------------------------- | ----------- |
-| player      | Yes       | [Object: Player](TODO)     | Specifies the player who fouled. |
-| disciplines | **No**    | List of [Discipline](TODO) | Lists all disciplines for this player - if any. |
-| victim      | **No**    | [Object: Player](TODO)     | Specifies the player who has been fouled - if known. |
-| message     | **No**    | String                     | Text message that will be displayed instead of a generated value. |
+| Field       | Necessary | Type                              | Description |
+| ----------- | --------- | --------------------------------- | ----------- |
+| player      | Yes       | [Object: Player](TODO)            | Specifies the player who fouled. |
+| disciplines | **No**    | List of [Discipline](#discipline) | Lists all disciplines for this player - if any. |
+| victim      | **No**    | [Object: Player](TODO)            | Specifies the player who has been fouled - if known. |
+| message     | **No**    | String                            | Text message that will be displayed instead of a generated value. |
 
 #### Disciplines
 * time: a simple time discipline
