@@ -1,22 +1,29 @@
 package de.jablab.HandballTickerStream.matchdata;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.json.simple.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 
+import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 
 public class MatchTimeTest {
+
+	private static final String INVALID_MINUTE = "nominute";
+	private static final String INVALID_MATCH_PHASE = "nophase";
 
 	private MatchTime sourceMatchTime;
 	private JSONObject matchTimeObject;
 
 	private MatchTime matchTime;
 
-	private void createMatchTime(final int minute, final MatchPhase phase) {
-		this.sourceMatchTime = new MatchTime(minute, phase);
+	@Before
+	public void setUp() {
+		this.sourceMatchTime = new MatchTime(36, MatchPhase.SECOND);
 		this.matchTimeObject = this.sourceMatchTime.toJSON();
 	}
 
@@ -38,8 +45,27 @@ public class MatchTimeTest {
 
 	@Test
 	public void testMatchTime() {
-		this.createMatchTime(36, MatchPhase.SECOND);
 		this.loadMatchTime(false);
+
+		assertEquals(this.sourceMatchTime.getMinute(),
+				this.matchTime.getMinute());
+		assertEquals(this.sourceMatchTime.getPhase(), this.matchTime.getPhase());
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testMatchTimeMinuteMalformed() {
+		this.matchTimeObject.put(HandballTickerStream.MatchTime.KEY_MINUTE,
+				INVALID_MINUTE);
+		this.loadMatchTime(true);
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testMatchTimePhaseMalformed() {
+		this.matchTimeObject.put(HandballTickerStream.MatchTime.KEY_PHASE,
+				INVALID_MATCH_PHASE);
+		this.loadMatchTime(true);
 	}
 
 }
