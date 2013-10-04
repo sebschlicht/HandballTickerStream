@@ -55,14 +55,15 @@ public class Score implements Streamable {
 							+ "\" is malformed: \"" + sGuest
 							+ "\" is not a number");
 				}
+			} else {
+				throw new ScoreFormatException("field \""
+						+ HandballTickerStream.Score.KEY_GUEST
+						+ "\" is missing");
 			}
-
+		} else {
 			throw new ScoreFormatException("field \""
-					+ HandballTickerStream.Score.KEY_GUEST + "\" is missing");
+					+ HandballTickerStream.Score.KEY_HOME + "\" is missing");
 		}
-
-		throw new ScoreFormatException("field \""
-				+ HandballTickerStream.Score.KEY_HOME + "\" is missing");
 	}
 
 	/**
@@ -91,8 +92,10 @@ public class Score implements Streamable {
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSON() {
 		final JSONObject object = new JSONObject();
-		object.put(HandballTickerStream.Score.KEY_HOME, this.home);
-		object.put(HandballTickerStream.Score.KEY_GUEST, this.guest);
+		object.put(HandballTickerStream.Score.KEY_HOME,
+				String.valueOf(this.home));
+		object.put(HandballTickerStream.Score.KEY_GUEST,
+				String.valueOf(this.guest));
 		return object;
 	}
 

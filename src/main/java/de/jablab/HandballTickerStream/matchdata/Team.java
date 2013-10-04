@@ -66,10 +66,11 @@ public class Team implements Streamable {
 							+ "\" is not an URL");
 				}
 			}
+		} else {
+			throw new TeamFormatException("field \""
+					+ HandballTickerStream.Team.KEY_IDENTIFIER
+					+ "\" is missing");
 		}
-
-		throw new TeamFormatException("field \""
-				+ HandballTickerStream.Team.KEY_IDENTIFIER + "\" is missing");
 	}
 
 	/**
@@ -109,12 +110,14 @@ public class Team implements Streamable {
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSON() {
 		final JSONObject object = new JSONObject();
-		object.put(HandballTickerStream.Team.KEY_IDENTIFIER, this.id);
+		object.put(HandballTickerStream.Team.KEY_IDENTIFIER,
+				String.valueOf(this.id));
 		if (this.name != null) {
 			object.put(HandballTickerStream.Team.KEY_NAME, this.name);
 		}
 		if (this.logoUrl != null) {
-			object.put(HandballTickerStream.Team.KEY_LOGO_URL, this.logoUrl);
+			object.put(HandballTickerStream.Team.KEY_LOGO_URL,
+					this.logoUrl.toString());
 		}
 		return object;
 	}
