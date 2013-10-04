@@ -56,8 +56,8 @@ A handball ticker stream holds information about the current progress of a match
 | Field        | Necessary | Type                                            | Description |
 | ------------ | --------- | ----------------------------------------------- | ----------- |
 | time         | Yes       | [Object: MatchTime](#matchtime)                 | Specifies the current match time. |
-| home         | Yes       | [Object: Team](#team)                           | Specifies the home team. |
-| guest        | Yes       | [Object: Team](#team)                           | Specifies the guest team. |
+| home         | Yes       | [Object: Team](#team)                           | Specifies the team having the home team role. |
+| guest        | Yes       | [Object: Team](#team)                           | Specifies the team having the guest team role. |
 | first        | Yes       | [Object: Score](#score)                         | Specifies the score of the teams in the first half. |
 | second       | **No**    | [Object: Score](#score)                         | Specifies the score of the teams in the second half - if reached yet. |
 | items        | **No**    | List of [object: StreamItem](#stream-item)      | Lists all stream items representing updates - if any existing. |
@@ -207,10 +207,6 @@ The sub type of the phase end item has to be `timeout` so it will be considered 
 | ----- | --------- | ----------------------- | ----------- |
 | team  | Yes       | [TeamRole](#team-roles) | Specifies the role of the team that used its timeout. |
 
-#### Team roles
-* home: team marked and set as home team in the stream
-* guest: team marked and set as guest team in the stream
-
 #### InjuryPhaseEndItem
 
 The sub type of the phase end item has to be `injury` so it will be considered a phase end due to an injury of a player.
@@ -231,22 +227,6 @@ The sub type of the phase end item has to be `injury` so it will be considered a
 | Field  | Necessary | Type                      | Description |
 | ------ | --------- | ------------------------- | ----------- |
 | player | Yes       | [Object: Player](#player) | Specifies the player that was injured. |
-
-#### Player
-
-    {
-         "id": "12",
-         "number": "1",
-         "name": "Mr. T",
-         "team": "home"
-    }
-
-| Field  | Necessary | Type                    | Description |
-| ------ | --------- | ----------------------- | ----------- |
-| id     | **No**    | int                     | Specifies the unique player identifier - if player is in the system. |
-| number | Yes       | int                     | Specifies the player number used in the match. |
-| name   | **No**    | String                  | Specifies the real name - if known. |
-| team   | Yes       | [TeamRole](#team-roles) | Specifies the role of the team the player is playing for. |
 
 
 
@@ -304,6 +284,26 @@ The type of the stream item has to be `score` so it will be considered a signal 
 * normal: no special kind of scoring
 * rush: scoring due to a rush
 * penalty: scoring due to a penalty throw
+
+#### Team roles
+* home: team marked and set as home team in the stream
+* guest: team marked and set as guest team in the stream
+
+#### Player
+
+    {
+         "id": "12",
+         "number": "1",
+         "name": "Mr. T",
+         "team": "home"
+    }
+
+| Field  | Necessary | Type                    | Description |
+| ------ | --------- | ----------------------- | ----------- |
+| id     | **No**    | int                     | Specifies the unique player identifier - if player is in the system. |
+| number | Yes       | int                     | Specifies the player number used in the match. |
+| name   | **No**    | String                  | Specifies the real name - if known. |
+| team   | Yes       | [TeamRole](#team-roles) | Specifies the role of the team the player is playing for. |
 
 
 
