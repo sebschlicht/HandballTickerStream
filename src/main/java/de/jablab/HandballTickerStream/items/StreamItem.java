@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import de.jablab.HandballTickerStream.HandballTickerStream;
+import de.jablab.HandballTickerStream.exceptions.FormatException;
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 import de.jablab.HandballTickerStream.matchdata.MatchTime;
@@ -19,7 +20,7 @@ import de.jablab.HandballTickerStream.matchdata.MatchTime;
  * @author sebschlicht
  * 
  */
-public abstract class StreamItem {
+public class StreamItem {
 
 	/**
 	 * date formatter
@@ -124,16 +125,22 @@ public abstract class StreamItem {
 	 * 
 	 * @param streamItem
 	 *            stream item JSON object
-	 * @throws StreamItemFormatException
+	 * @throws FormatException
 	 *             if the JSON object is not a valid stream item object
 	 */
 	public static StreamItem parseJSON(final JSONObject streamItem)
-			throws StreamItemFormatException {
+			throws FormatException {
+		final Date published = parsePublished(streamItem);
+		final MatchTime time = parseTime(streamItem);
 		final StreamItemType type = parseStreamItemType(streamItem);
+		final String message = parseMessage(streamItem);
+
+		final StreamItem basicStreamItem = new StreamItem(published, time,
+				type, message);
 
 		switch (type) {
 		case PHASE_END:
-			return PhaseEndItem.parseJSON(streamItem);
+			return PhaseEndItem.parseJSON(basicStreamItem, streamItem);
 
 		default:
 			return null;
