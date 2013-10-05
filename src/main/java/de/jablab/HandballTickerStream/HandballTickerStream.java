@@ -30,4 +30,14 @@ public class HandballTickerStream {
 
 	}
 
+	public class StreamItem {
+
+		public static final String KEY_PUBLISHED = "published";
+		public static final String KEY_TIME = "time";
+		public static final String KEY_TYPE = "type";
+		public static final String KEY_OBJECT = "object";
+		public static final String KEY_MESSAGE = "message";
+
+	}
+
 }

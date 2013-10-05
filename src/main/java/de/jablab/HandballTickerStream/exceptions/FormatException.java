@@ -24,6 +24,10 @@ public abstract class FormatException extends Exception {
 		final StringBuilder message = new StringBuilder();
 		if (this.previous != null) {
 			message.append(this.title);
+			if (this.reason != null) {
+				message.append(": ");
+				message.append(this.reason);
+			}
 			message.append("!\n");
 			message.append(this.previous.getMessage());
 		} else {

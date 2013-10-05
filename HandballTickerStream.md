@@ -137,8 +137,8 @@ This specific data is specified in `object`.
 | message   | **No**    | String                               | Text message that will be displayed instead of a generated value. |
 
 ### Stream item types
-* [phase-end](#phaseenditem): a match phase has been finished
-* [text](#textitem): text message to viewers, no event happened necessarily
+* [phase-end](#phaseenditem): a match phase ended
+* [text](#textitem): a pure text message to viewers, no event happened necessarily
 * [score](#scoreitem): a player scored
 * [foul](#foulitem): a player fouled
 
