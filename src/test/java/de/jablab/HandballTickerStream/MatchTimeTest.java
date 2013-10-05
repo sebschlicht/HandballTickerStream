@@ -1,4 +1,4 @@
-package de.jablab.HandballTickerStream.matchdata;
+package de.jablab.HandballTickerStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNull;
 
 import org.json.simple.JSONObject;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 
 public class MatchTimeTest {
@@ -18,20 +18,24 @@ public class MatchTimeTest {
 
 	private static final String MALFORMED_MINUTE = "nominute";
 
-	private MatchTime sourceMatchTime;
-	private JSONObject matchTimeObject;
+	private static MatchTime SOURCE_MATCH_TIME;
+	private JSONObject sourceMatchTimeObject;
 
 	private MatchTime matchTime;
 
+	@BeforeClass
+	public static void beforeClass() {
+		SOURCE_MATCH_TIME = new MatchTime(VALID_MINUTE, VALID_PHASE);
+	}
+
 	@Before
 	public void setUp() {
-		this.sourceMatchTime = new MatchTime(VALID_MINUTE, VALID_PHASE);
-		this.matchTimeObject = this.sourceMatchTime.toJSON();
+		this.sourceMatchTimeObject = SOURCE_MATCH_TIME.toJSON();
 	}
 
 	private void loadMatchTime(final boolean error) {
 		try {
-			this.matchTime = MatchTime.parseJSON(this.matchTimeObject);
+			this.matchTime = MatchTime.parseJSON(this.sourceMatchTimeObject);
 		} catch (final MatchTimeFormatException e) {
 			if (!error) {
 				e.printStackTrace();
@@ -49,15 +53,14 @@ public class MatchTimeTest {
 	public void testValidMatchTime() {
 		this.loadMatchTime(false);
 
-		assertEquals(this.sourceMatchTime.getMinute(),
-				this.matchTime.getMinute());
-		assertEquals(this.sourceMatchTime.getPhase(), this.matchTime.getPhase());
+		assertEquals(SOURCE_MATCH_TIME.getMinute(), this.matchTime.getMinute());
+		assertEquals(SOURCE_MATCH_TIME.getPhase(), this.matchTime.getPhase());
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testMatchTimeMinuteMissing() {
-		this.matchTimeObject.put(HandballTickerStream.MatchTime.KEY_MINUTE,
+		this.sourceMatchTimeObject.put(HandballTickerStream.MatchTime.KEY_MINUTE,
 				null);
 		this.loadMatchTime(true);
 	}
@@ -65,7 +68,7 @@ public class MatchTimeTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testMatchTimeMinuteMalformed() {
-		this.matchTimeObject.put(HandballTickerStream.MatchTime.KEY_MINUTE,
+		this.sourceMatchTimeObject.put(HandballTickerStream.MatchTime.KEY_MINUTE,
 				MALFORMED_MINUTE);
 		this.loadMatchTime(true);
 	}
@@ -73,7 +76,7 @@ public class MatchTimeTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testMatchTimePhaseMissing() {
-		this.matchTimeObject
+		this.sourceMatchTimeObject
 				.put(HandballTickerStream.MatchTime.KEY_PHASE, null);
 		this.loadMatchTime(true);
 	}

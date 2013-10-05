@@ -1,12 +1,10 @@
-package de.jablab.HandballTickerStream.matchdata;
+package de.jablab.HandballTickerStream;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.json.simple.JSONObject;
 
-import de.jablab.HandballTickerStream.HandballTickerStream;
-import de.jablab.HandballTickerStream.Streamable;
 import de.jablab.HandballTickerStream.exceptions.TeamFormatException;
 
 /**

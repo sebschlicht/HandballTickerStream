@@ -1,4 +1,4 @@
-package de.jablab.HandballTickerStream.matchdata;
+package de.jablab.HandballTickerStream;
 
 /**
  * phases a match can be in

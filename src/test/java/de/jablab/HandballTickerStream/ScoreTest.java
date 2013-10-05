@@ -1,4 +1,4 @@
-package de.jablab.HandballTickerStream.matchdata;
+package de.jablab.HandballTickerStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.jablab.HandballTickerStream.HandballTickerStream;
+import de.jablab.HandballTickerStream.Score;
 import de.jablab.HandballTickerStream.exceptions.ScoreFormatException;
 
 public class ScoreTest {

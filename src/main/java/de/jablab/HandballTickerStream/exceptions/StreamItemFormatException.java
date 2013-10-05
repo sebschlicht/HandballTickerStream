@@ -11,4 +11,9 @@ public class StreamItemFormatException extends FormatException {
 		super("failed to parse stream item", reason, previous);
 	}
 
+	public StreamItemFormatException(final String title, final String reason,
+			final FormatException previous) {
+		super(title, reason, previous);
+	}
+
 }

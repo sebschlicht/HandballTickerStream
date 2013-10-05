@@ -5,9 +5,11 @@ import java.util.Date;
 import org.json.simple.JSONObject;
 
 import de.jablab.HandballTickerStream.HandballTickerStream;
+import de.jablab.HandballTickerStream.MatchPhase;
+import de.jablab.HandballTickerStream.MatchTime;
+import de.jablab.HandballTickerStream.StreamItem;
+import de.jablab.HandballTickerStream.StreamItemType;
 import de.jablab.HandballTickerStream.exceptions.items.PhaseEndItemFormatException;
-import de.jablab.HandballTickerStream.matchdata.MatchPhase;
-import de.jablab.HandballTickerStream.matchdata.MatchTime;
 
 /**
  * match phase end stream item
@@ -86,6 +88,30 @@ public class PhaseEndItem extends StreamItem {
 
 	public void setSubType(PhaseEndSubType subType) {
 		this.subType = subType;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON() {
+		final JSONObject json = super.toJSON();
+		final JSONObject object = new JSONObject();
+		object.put(HandballTickerStream.StreamItem.PhaseEndItem.KEY_BEFORE,
+				this.before.toString());
+		object.put(HandballTickerStream.StreamItem.PhaseEndItem.KEY_AFTER,
+				this.after.toString());
+		if (this.subType != null) {
+			object.put(
+					HandballTickerStream.StreamItem.PhaseEndItem.KEY_SUB_TYPE,
+					this.subType.toString());
+		}
+		json.put(HandballTickerStream.StreamItem.PhaseEndItem.KEY_OBJECT,
+				object);
+		return json;
+	}
+
+	@Override
+	public String toJSONString() {
+		return this.toJSON().toJSONString();
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package de.jablab.HandballTickerStream.matchdata;
+package de.jablab.HandballTickerStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,11 +8,11 @@ import org.junit.Test;
 
 public class MatchPhaseTest {
 
-	public static final String INVALID_MATCH_PHASE = "nophase";
+	private static final String INVALID_MATCH_PHASE = "nophase";
 
 	private MatchPhase phase;
 
-	public void loadMatchPhase(final MatchPhase phase) {
+	private void loadMatchPhase(final MatchPhase phase) {
 		this.phase = MatchPhase.parseString(phase.toString());
 		assertNotNull(this.phase);
 		assertEquals(phase, this.phase);
@@ -21,7 +21,6 @@ public class MatchPhaseTest {
 	@Test
 	public void testPhaseInvalid() {
 		this.phase = MatchPhase.parseString(INVALID_MATCH_PHASE);
-
 		assertNull(this.phase);
 	}
 

@@ -1,4 +1,4 @@
-package de.jablab.HandballTickerStream.items;
+package de.jablab.HandballTickerStream;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,11 +8,9 @@ import java.util.Locale;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import de.jablab.HandballTickerStream.HandballTickerStream;
-import de.jablab.HandballTickerStream.exceptions.FormatException;
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
-import de.jablab.HandballTickerStream.matchdata.MatchTime;
+import de.jablab.HandballTickerStream.items.PhaseEndItem;
 
 /**
  * basic item for the handball ticker stream
@@ -20,7 +18,7 @@ import de.jablab.HandballTickerStream.matchdata.MatchTime;
  * @author sebschlicht
  * 
  */
-public class StreamItem {
+public class StreamItem implements Streamable {
 
 	/**
 	 * date formatter
@@ -120,16 +118,41 @@ public class StreamItem {
 		this.message = message;
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON() {
+		final JSONObject object = new JSONObject();
+		object.put(HandballTickerStream.StreamItem.KEY_PUBLISHED,
+				DATE_FORMATTER.format(this.published));
+		object.put(HandballTickerStream.StreamItem.KEY_TIME, this.time.toJSON());
+		object.put(HandballTickerStream.StreamItem.KEY_TYPE,
+				this.type.toString());
+		return object;
+	}
+
+	@Override
+	public String toJSONString() {
+		return this.toJSON().toJSONString();
+	}
+
 	/**
-	 * load any stream item from JSON object
+	 * load any stream item from JSON
 	 * 
-	 * @param streamItem
-	 *            stream item JSON object
-	 * @throws FormatException
-	 *             if the JSON object is not a valid stream item object
+	 * @param jsonString
+	 *            stream item JSON
+	 * @throws StreamItemFormatException
+	 *             if the JSON is not a valid stream item object
 	 */
-	public static StreamItem parseJSON(final JSONObject streamItem)
-			throws FormatException {
+	public static StreamItem parseJSON(final String jsonString)
+			throws StreamItemFormatException {
+		JSONObject streamItem;
+		try {
+			streamItem = (JSONObject) JSON_PARSER.parse(jsonString);
+		} catch (org.json.simple.parser.ParseException e) {
+			throw new StreamItemFormatException("\"" + jsonString
+					+ "\" is not a JSON String");
+		}
+
 		final Date published = parsePublished(streamItem);
 		final MatchTime time = parseTime(streamItem);
 		final StreamItemType type = parseStreamItemType(streamItem);
@@ -139,11 +162,11 @@ public class StreamItem {
 				type, message);
 
 		switch (type) {
-		case PHASE_END:
-			return PhaseEndItem.parseJSON(basicStreamItem, streamItem);
+			case PHASE_END:
+				return PhaseEndItem.parseJSON(basicStreamItem, streamItem);
 
-		default:
-			return null;
+			default:
+				return null;
 		}
 	}
 
@@ -187,21 +210,22 @@ public class StreamItem {
 	 */
 	protected static MatchTime parseTime(final JSONObject streamItem)
 			throws StreamItemFormatException {
-		final String sTime = (String) streamItem
+		final Object time = streamItem
 				.get(HandballTickerStream.StreamItem.KEY_TIME);
-		if (sTime != null) {
-			try {
-				final JSONObject time = (JSONObject) JSON_PARSER.parse(sTime);
-				return MatchTime.parseJSON(time);
-			} catch (final org.json.simple.parser.ParseException e) {
+		if (time != null) {
+			if (time instanceof JSONObject) {
+				try {
+					return MatchTime.parseJSON((JSONObject) time);
+				} catch (final MatchTimeFormatException e) {
+					throw new StreamItemFormatException("field \""
+							+ HandballTickerStream.StreamItem.KEY_TIME
+							+ "\" is not a match time object", e);
+				}
+			} else {
 				throw new StreamItemFormatException("field \""
 						+ HandballTickerStream.StreamItem.KEY_TIME
-						+ "\" is malformed: \"" + sTime
+						+ "\" is malformed: \"" + time
 						+ "\" is not a JSON object");
-			} catch (final MatchTimeFormatException e) {
-				throw new StreamItemFormatException("field \""
-						+ HandballTickerStream.StreamItem.KEY_TIME
-						+ "\" is not a match time object", e);
 			}
 		} else {
 			throw new StreamItemFormatException("field \""

@@ -1,4 +1,4 @@
-package de.jablab.HandballTickerStream.items;
+package de.jablab.HandballTickerStream;
 
 
 /**

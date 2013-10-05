@@ -1,9 +1,7 @@
-package de.jablab.HandballTickerStream.matchdata;
+package de.jablab.HandballTickerStream;
 
 import org.json.simple.JSONObject;
 
-import de.jablab.HandballTickerStream.HandballTickerStream;
-import de.jablab.HandballTickerStream.Streamable;
 import de.jablab.HandballTickerStream.exceptions.ScoreFormatException;
 
 /**
