@@ -25,7 +25,7 @@ public class TeamTest {
 	private static final String MALFORMED_IDENTIFIER = "noidentifier";
 	private static final String MALFORMED_LOGO_URL_STRING = "test/ /de/logo.png";
 
-	private Team sourceTeam;
+	private static Team SOURCE_TEAM;
 	private JSONObject sourceTeamObject;
 
 	private Team team;
@@ -33,12 +33,12 @@ public class TeamTest {
 	@BeforeClass
 	public static void beforeClass() throws MalformedURLException {
 		VALID_LOGO_URL = new URL(VALID_LOGO_URL_STRING);
+		SOURCE_TEAM = new Team(VALID_IDENTIFIER, VALID_NAME, VALID_LOGO_URL);
 	}
 
 	@Before
 	public void setUp() {
-		this.sourceTeam = new Team(VALID_IDENTIFIER, VALID_NAME, VALID_LOGO_URL);
-		this.sourceTeamObject = this.sourceTeam.toJSON();
+		this.sourceTeamObject = SOURCE_TEAM.toJSON();
 	}
 
 	private void loadTeam(final boolean error) {
@@ -61,8 +61,8 @@ public class TeamTest {
 	public void testValidTeam() {
 		this.loadTeam(false);
 
-		assertEquals(this.sourceTeam.getId(), this.team.getId());
-		assertEquals(this.sourceTeam.getName(), this.team.getName());
+		assertEquals(SOURCE_TEAM.getId(), this.team.getId());
+		assertEquals(SOURCE_TEAM.getName(), this.team.getName());
 		assertEquals(VALID_LOGO_URL_STRING, this.team.getLogoUrl().toString());
 	}
 

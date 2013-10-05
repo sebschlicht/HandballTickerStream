@@ -25,6 +25,19 @@ public class Score implements Streamable {
 	private int guest;
 
 	/**
+	 * create a new score for both teams
+	 * 
+	 * @param home
+	 *            score of the home team
+	 * @param guest
+	 *            score of the guest team
+	 */
+	public Score(final int home, final int guest) {
+		this.home = home;
+		this.guest = guest;
+	}
+
+	/**
 	 * load score from JSON object
 	 * 
 	 * @param score
