@@ -38,48 +38,6 @@ public class Score implements Streamable {
 	}
 
 	/**
-	 * load score from JSON object
-	 * 
-	 * @param score
-	 *            JSON score object
-	 * @throws ScoreFormatException
-	 *             if the JSON object is not a valid score object
-	 */
-	public Score(final JSONObject score) throws ScoreFormatException {
-		final String sHome = (String) score
-				.get(HandballTickerStream.Score.KEY_HOME);
-		if (sHome != null) {
-			try {
-				this.home = Integer.valueOf(sHome);
-			} catch (final NumberFormatException e) {
-				throw new ScoreFormatException("field \""
-						+ HandballTickerStream.Score.KEY_HOME
-						+ "\" is malformed: \"" + sHome + "\" is not a number");
-			}
-
-			final String sGuest = (String) score
-					.get(HandballTickerStream.Score.KEY_GUEST);
-			if (sGuest != null) {
-				try {
-					this.guest = Integer.valueOf(sGuest);
-				} catch (final NumberFormatException e) {
-					throw new ScoreFormatException("field \""
-							+ HandballTickerStream.Score.KEY_GUEST
-							+ "\" is malformed: \"" + sGuest
-							+ "\" is not a number");
-				}
-			} else {
-				throw new ScoreFormatException("field \""
-						+ HandballTickerStream.Score.KEY_GUEST
-						+ "\" is missing");
-			}
-		} else {
-			throw new ScoreFormatException("field \""
-					+ HandballTickerStream.Score.KEY_HOME + "\" is missing");
-		}
-	}
-
-	/**
 	 * @return score of the home team
 	 */
 	public int getHome() {
@@ -115,6 +73,75 @@ public class Score implements Streamable {
 	@Override
 	public String toJSONString() {
 		return this.toJSON().toJSONString();
+	}
+
+	/**
+	 * load score from JSON object
+	 * 
+	 * @param score
+	 *            score JSON object
+	 * @throws ScoreFormatException
+	 *             if the JSON object is not a valid score object
+	 */
+	public static Score parseJSON(final JSONObject score)
+			throws ScoreFormatException {
+		final int home = parseHome(score);
+		final int guest = parseGuest(score);
+		return new Score(home, guest);
+	}
+
+	/**
+	 * parse the home field
+	 * 
+	 * @param score
+	 *            score JSON object
+	 * @return score of the home team
+	 * @throws ScoreFormatException
+	 *             if field missing or malformed
+	 */
+	private static int parseHome(final JSONObject score)
+			throws ScoreFormatException {
+		final String sHome = (String) score
+				.get(HandballTickerStream.Score.KEY_HOME);
+		if (sHome != null) {
+			try {
+				return Integer.valueOf(sHome);
+			} catch (final NumberFormatException e) {
+				throw new ScoreFormatException("field \""
+						+ HandballTickerStream.Score.KEY_HOME
+						+ "\" is malformed: \"" + sHome + "\" is not a number");
+			}
+		} else {
+			throw new ScoreFormatException("field \""
+					+ HandballTickerStream.Score.KEY_HOME + "\" is missing");
+		}
+	}
+
+	/**
+	 * parse the guest field
+	 * 
+	 * @param score
+	 *            score JSON object
+	 * @return score of the guest team
+	 * @throws ScoreFormatException
+	 *             if field missing or malformed
+	 */
+	private static int parseGuest(final JSONObject score)
+			throws ScoreFormatException {
+		final String sGuest = (String) score
+				.get(HandballTickerStream.Score.KEY_GUEST);
+		if (sGuest != null) {
+			try {
+				return Integer.valueOf(sGuest);
+			} catch (final NumberFormatException e) {
+				throw new ScoreFormatException("field \""
+						+ HandballTickerStream.Score.KEY_GUEST
+						+ "\" is malformed: \"" + sGuest + "\" is not a number");
+			}
+		} else {
+			throw new ScoreFormatException("field \""
+					+ HandballTickerStream.Score.KEY_GUEST + "\" is missing");
+		}
 	}
 
 }

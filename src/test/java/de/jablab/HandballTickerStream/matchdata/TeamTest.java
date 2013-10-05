@@ -43,7 +43,7 @@ public class TeamTest {
 
 	private void loadTeam(final boolean error) {
 		try {
-			this.team = new Team(this.sourceTeamObject);
+			this.team = Team.parseJSON(this.sourceTeamObject);
 		} catch (final TeamFormatException e) {
 			if (!error) {
 				e.printStackTrace();

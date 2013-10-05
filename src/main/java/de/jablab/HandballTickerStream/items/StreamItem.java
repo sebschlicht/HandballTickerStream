@@ -172,7 +172,8 @@ public abstract class StreamItem {
 	 * 
 	 * @param streamItem
 	 *            stream item JSON object
-	 * @return message displayed instead of a generated value
+	 * @return message displayed instead of a generated value<br>
+	 *         <b>null</b> if field missing
 	 */
 	protected static String parseMessage(final JSONObject streamItem) {
 		return (String) streamItem

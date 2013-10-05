@@ -79,7 +79,7 @@ public class MatchTime implements Streamable {
 	 * load match time from JSON object
 	 * 
 	 * @param matchTime
-	 *            JSON match time object
+	 *            match time JSON object
 	 * @throws MatchTimeFormatException
 	 *             if the JSON object is not a valid match time object
 	 */

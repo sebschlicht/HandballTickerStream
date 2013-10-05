@@ -36,7 +36,7 @@ public class ScoreTest {
 
 	private void loadScore(final boolean error) {
 		try {
-			this.score = new Score(this.sourceScoreObject);
+			this.score = Score.parseJSON(this.sourceScoreObject);
 		} catch (final ScoreFormatException e) {
 			if (!error) {
 				e.printStackTrace();
