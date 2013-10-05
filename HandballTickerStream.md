@@ -124,7 +124,8 @@ This specific data is specified in `object`.
         "type": "score",
         "object": {
             ...
-        }
+        },
+        "message": "The 21st goal of Mr. T!"
     }
 
 | Field     | Necessary | Type                                 | Description |
@@ -133,6 +134,7 @@ This specific data is specified in `object`.
 | time      | Yes       | [Object: MatchTime](#matchtime)      | Specifies the match time the item has been published. This is considered to be the time the event happened. |
 | type      | Yes       | [StreamItemType](#stream-item-types) | Specifies the type of the item. |
 | object    | Yes       | <Type>Item                           | Holds stream item type specific data. |
+| message   | **No**    | String                               | Text message that will be displayed instead of a generated value. |
 
 ### Stream item types
 * [phase-end](#phaseenditem): a match phase has been finished
@@ -171,7 +173,6 @@ The type of the stream item has to be `phase-end` so it will be considered a mat
 | after   | Yes                           | [MatchPhase](#match-phases)             | Specifies the new phase that begun. |
 | subType | **No**                        | [PhaseEndSubType](#phase-end-sub-types) | Specifies the sub type of the phase end - if any sub type applies. |
 | object  | Yes if sub type **is set**    | <SubType>PhaseEndItem                   | Holds phase end sub type specific data. |
-| message | **No**                        | String                                  | Text message that will be displayed instead of a generated value. |
 
 #### Match phase combinations allowed:
 
@@ -267,9 +268,9 @@ The type of the stream item has to be `score` so it will be considered a signal 
                 "number": "1",
                 "name": "Mr. T",
                 "team": "home"
-            },
-            "message": "The 21st goal of Mr. T!"
-        }
+            }
+        },
+        ...
     }
 
 | Field   | Necessary | Type                          | Description |
@@ -278,7 +279,6 @@ The type of the stream item has to be `score` so it will be considered a signal 
 | team    | Yes       | [TeamRole](#team-roles)       | Specifies the role of the team scored. |
 | type    | Yes       | [ScoringType](#scoring-types) | Specifies the type of the scoring. |
 | player  | **No**    | [Object: Player](#player)     | Specifies the player who scored - if known. |
-| message | **No**    | String                        | Text message that will be displayed instead of a generated value. |
 
 #### Scoring types
 * normal: no special kind of scoring
@@ -331,9 +331,9 @@ The type of the stream item has to be `foul` so it will be considered a signal f
                 "number": "1",
                 "name": "Mr. T",
                 "team": "home"
-            },
-            "message": "Mr. T crushed another bone..."
-        }
+            }
+        },
+        ...
     }
 
 | Field       | Necessary | Type                               | Description |
@@ -341,7 +341,6 @@ The type of the stream item has to be `foul` so it will be considered a signal f
 | player      | Yes       | [Object: Player](#player)          | Specifies the player who fouled. |
 | disciplines | **No**    | List of [Discipline](#disciplines) | Lists all disciplines for this player - if any. |
 | victim      | **No**    | [Object: Player](#player)          | Specifies the player who has been fouled - if known. |
-| message     | **No**    | String                             | Text message that will be displayed instead of a generated value. |
 
 #### Disciplines
 * time: a simple time discipline
