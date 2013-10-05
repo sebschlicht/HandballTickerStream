@@ -35,54 +35,6 @@ public class MatchTime implements Streamable {
 	public MatchTime(final int minute, final MatchPhase phase) {
 		this.minute = minute;
 		this.phase = phase;
-
-		if (phase == null) {
-			throw new IllegalArgumentException("phase must not be null!");
-		}
-	}
-
-	/**
-	 * load match time from JSON object
-	 * 
-	 * @param matchTime
-	 *            JSON match time object
-	 * @throws MatchTimeFormatException
-	 *             if the JSON object is not a valid match time object
-	 */
-	public MatchTime(final JSONObject matchTime)
-			throws MatchTimeFormatException {
-		final String sMinute = (String) matchTime
-				.get(HandballTickerStream.MatchTime.KEY_MINUTE);
-		if (sMinute != null) {
-			try {
-				this.minute = Integer.valueOf(sMinute);
-			} catch (final NumberFormatException e) {
-				throw new MatchTimeFormatException("field \""
-						+ HandballTickerStream.MatchTime.KEY_MINUTE
-						+ "\" is malformed: \"" + sMinute
-						+ "\" is not a number");
-			}
-
-			final String sMatchPhase = (String) matchTime
-					.get(HandballTickerStream.MatchTime.KEY_PHASE);
-			if (sMatchPhase != null) {
-				this.phase = MatchPhase.parseString(sMatchPhase);
-				if (this.phase == null) {
-					throw new MatchTimeFormatException("field \""
-							+ HandballTickerStream.MatchTime.KEY_PHASE
-							+ "\" is malformed: \"" + sMatchPhase
-							+ "\" is not a match phase");
-				}
-			} else {
-				throw new MatchTimeFormatException("field \""
-						+ HandballTickerStream.MatchTime.KEY_PHASE
-						+ "\" is missing");
-			}
-		} else {
-			throw new MatchTimeFormatException("field \""
-					+ HandballTickerStream.MatchTime.KEY_MINUTE
-					+ "\" is missing");
-		}
 	}
 
 	/**
@@ -121,6 +73,80 @@ public class MatchTime implements Streamable {
 	@Override
 	public String toJSONString() {
 		return this.toJSON().toJSONString();
+	}
+
+	/**
+	 * load match time from JSON object
+	 * 
+	 * @param matchTime
+	 *            JSON match time object
+	 * @throws MatchTimeFormatException
+	 *             if the JSON object is not a valid match time object
+	 */
+	public static MatchTime parseJSON(final JSONObject matchTime)
+			throws MatchTimeFormatException {
+		final int minute = parseMinute(matchTime);
+		final MatchPhase phase = parsePhase(matchTime);
+		return new MatchTime(minute, phase);
+	}
+
+	/**
+	 * parse the minute field
+	 * 
+	 * @param matchTime
+	 *            match time JSON object
+	 * @return minute of the match
+	 * @throws MatchTimeFormatException
+	 *             if field missing or malformed
+	 */
+	private static int parseMinute(final JSONObject matchTime)
+			throws MatchTimeFormatException {
+		final String sMinute = (String) matchTime
+				.get(HandballTickerStream.MatchTime.KEY_MINUTE);
+		if (sMinute != null) {
+			try {
+				return Integer.valueOf(sMinute);
+			} catch (final NumberFormatException e) {
+				throw new MatchTimeFormatException("field \""
+						+ HandballTickerStream.MatchTime.KEY_MINUTE
+						+ "\" is malformed: \"" + sMinute
+						+ "\" is not a number");
+			}
+		} else {
+			throw new MatchTimeFormatException("field \""
+					+ HandballTickerStream.MatchTime.KEY_MINUTE
+					+ "\" is missing");
+		}
+	}
+
+	/**
+	 * parse the phase field
+	 * 
+	 * @param matchTime
+	 *            match time JSON object
+	 * @return phase the match is in
+	 * @throws MatchTimeFormatException
+	 *             if field missing or malformed
+	 */
+	private static MatchPhase parsePhase(final JSONObject matchTime)
+			throws MatchTimeFormatException {
+		final String sMatchPhase = (String) matchTime
+				.get(HandballTickerStream.MatchTime.KEY_PHASE);
+		if (sMatchPhase != null) {
+			final MatchPhase phase = MatchPhase.parseString(sMatchPhase);
+			if (phase != null) {
+				return phase;
+			} else {
+				throw new MatchTimeFormatException("field \""
+						+ HandballTickerStream.MatchTime.KEY_PHASE
+						+ "\" is malformed: \"" + sMatchPhase
+						+ "\" is not a match phase");
+			}
+		} else {
+			throw new MatchTimeFormatException("field \""
+					+ HandballTickerStream.MatchTime.KEY_PHASE
+					+ "\" is missing");
+		}
 	}
 
 }

@@ -119,7 +119,7 @@ public abstract class StreamItem {
 		if (sTime != null) {
 			try {
 				final JSONObject time = (JSONObject) JSON_PARSER.parse(sTime);
-				return new MatchTime(time);
+				return MatchTime.parseJSON(time);
 			} catch (final org.json.simple.parser.ParseException e) {
 				throw new StreamItemFormatException("field \""
 						+ HandballTickerStream.StreamItem.KEY_TIME

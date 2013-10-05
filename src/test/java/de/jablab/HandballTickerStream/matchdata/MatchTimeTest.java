@@ -31,7 +31,7 @@ public class MatchTimeTest {
 
 	private void loadMatchTime(final boolean error) {
 		try {
-			this.matchTime = new MatchTime(this.matchTimeObject);
+			this.matchTime = MatchTime.parseJSON(this.matchTimeObject);
 		} catch (final MatchTimeFormatException e) {
 			if (!error) {
 				e.printStackTrace();
