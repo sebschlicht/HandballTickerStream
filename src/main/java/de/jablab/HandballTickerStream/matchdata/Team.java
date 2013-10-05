@@ -33,6 +33,34 @@ public class Team implements Streamable {
 	private URL logoUrl;
 
 	/**
+	 * create a new team playing in the match
+	 * 
+	 * @param id
+	 *            unique team identifier
+	 * @param name
+	 *            team name displayed
+	 */
+	public Team(final int id, final String name) {
+		this.id = id;
+		this.name = name;
+	}
+
+	/**
+	 * create a new team playing in the match
+	 * 
+	 * @param id
+	 *            unique team identifier
+	 * @param name
+	 *            team name displayed
+	 * @param logoUrl
+	 *            URL to the team logo
+	 */
+	public Team(final int id, final String name, final URL logoUrl) {
+		this(id, name);
+		this.logoUrl = logoUrl;
+	}
+
+	/**
 	 * load team from JSON object
 	 * 
 	 * @param team
@@ -53,18 +81,22 @@ public class Team implements Streamable {
 			}
 
 			this.name = (String) team.get(HandballTickerStream.Team.KEY_NAME);
-
-			final String sLogoUrl = (String) team
-					.get(HandballTickerStream.Team.KEY_LOGO_URL);
-			if (sLogoUrl != null) {
-				try {
-					this.logoUrl = new URL(sLogoUrl);
-				} catch (final MalformedURLException e) {
-					throw new TeamFormatException("field \""
-							+ HandballTickerStream.Team.KEY_LOGO_URL
-							+ "\" is malformed: \"" + sLogoUrl
-							+ "\" is not an URL");
+			if (this.name != null) {
+				final String sLogoUrl = (String) team
+						.get(HandballTickerStream.Team.KEY_LOGO_URL);
+				if (sLogoUrl != null) {
+					try {
+						this.logoUrl = new URL(sLogoUrl);
+					} catch (final MalformedURLException e) {
+						throw new TeamFormatException("field \""
+								+ HandballTickerStream.Team.KEY_LOGO_URL
+								+ "\" is malformed: \"" + sLogoUrl
+								+ "\" is not an URL");
+					}
 				}
+			} else {
+				throw new TeamFormatException("field \""
+						+ HandballTickerStream.Team.KEY_NAME + "\" is missing");
 			}
 		} else {
 			throw new TeamFormatException("field \""
