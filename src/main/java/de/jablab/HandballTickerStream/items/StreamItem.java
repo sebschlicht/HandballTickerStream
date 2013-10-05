@@ -35,23 +35,23 @@ public abstract class StreamItem {
 	/**
 	 * exact time when published
 	 */
-	protected Date published;
+	private Date published;
 
 	/**
 	 * match time when published<br>
 	 * considered to be the time of the happening
 	 */
-	protected MatchTime time;
+	private MatchTime time;
 
 	/**
 	 * type of the item
 	 */
-	protected StreamItemType type;
+	private StreamItemType type;
 
 	/**
 	 * message displayed instead of a generated value
 	 */
-	protected String message;
+	private String message;
 
 	/**
 	 * create a new basic item for the handball ticker stream
@@ -72,6 +72,72 @@ public abstract class StreamItem {
 		this.time = time;
 		this.type = type;
 		this.message = message;
+	}
+
+	/**
+	 * @return exact time when published
+	 */
+	public Date getPublished() {
+		return this.published;
+	}
+
+	public void setPublished(Date published) {
+		this.published = published;
+	}
+
+	/**
+	 * @return match time when published<br>
+	 *         considered to be the time of the happening
+	 */
+	public MatchTime getTime() {
+		return this.time;
+	}
+
+	public void setTime(MatchTime time) {
+		this.time = time;
+	}
+
+	/**
+	 * @return type of the item
+	 */
+	public StreamItemType getType() {
+		return this.type;
+	}
+
+	public void setType(StreamItemType type) {
+		this.type = type;
+	}
+
+	/**
+	 * @return message displayed instead of a generated value
+	 */
+	public String getMessage() {
+		return this.message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	/**
+	 * load any stream item from JSON object
+	 * 
+	 * @param streamItem
+	 *            stream item JSON object
+	 * @throws StreamItemFormatException
+	 *             if the JSON object is not a valid stream item object
+	 */
+	public static StreamItem parseJSON(final JSONObject streamItem)
+			throws StreamItemFormatException {
+		final StreamItemType type = parseStreamItemType(streamItem);
+
+		switch (type) {
+		case PHASE_END:
+			return PhaseEndItem.parseJSON(streamItem);
+
+		default:
+			return null;
+		}
 	}
 
 	/**

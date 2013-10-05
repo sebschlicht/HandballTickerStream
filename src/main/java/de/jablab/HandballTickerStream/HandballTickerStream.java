@@ -38,6 +38,15 @@ public class HandballTickerStream {
 		public static final String KEY_OBJECT = "object";
 		public static final String KEY_MESSAGE = "message";
 
+		public class PhaseEndItem {
+
+			public static final String KEY_BEFORE = "before";
+			public static final String KEY_AFTER = "after";
+			public static final String KEY_SUB_TYPE = "subType";
+			public static final String KEY_OBJECT = "object";
+
+		}
+
 	}
 
 }

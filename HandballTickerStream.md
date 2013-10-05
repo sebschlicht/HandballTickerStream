@@ -188,13 +188,13 @@ The type of the stream item has to be `phase-end` so it will be considered a mat
 | second    | finished  | Match finished |
 
 #### Phase end sub types
-* [timeout](#timeoutphaseenditem): pause due to a timeout
+* [timeout](#timeoutphaseenditem): pause due to a timeout by a team
 * [injury](#injuryphaseenditem): pause due to an injury of a player
 
  
 #### TimeoutPhaseEndItem
 
-The sub type of the phase end item has to be `timeout` so it will be considered a phase end due to a timeout.
+The sub type of the phase end item has to be `timeout` so it will be considered a phase end due to a timeout by a team.
 
     {
         ...
