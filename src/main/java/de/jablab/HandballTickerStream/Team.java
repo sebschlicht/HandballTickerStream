@@ -13,7 +13,7 @@ import de.jablab.HandballTickerStream.exceptions.TeamFormatException;
  * @author sebschlicht
  * 
  */
-public class Team implements Streamable {
+public class Team extends Streamable {
 
 	/**
 	 * unique team identifier
@@ -101,6 +101,27 @@ public class Team implements Streamable {
 	}
 
 	/**
+	 * load team from JSON
+	 * 
+	 * @param jsonString
+	 *            team JSON
+	 * @throws TeamFormatException
+	 *             if the JSON is not a valid team object
+	 */
+	public static Team parseJSON(final String jsonString)
+			throws TeamFormatException {
+		JSONObject team;
+		try {
+			team = (JSONObject) JSON_PARSER.parse(jsonString);
+		} catch (org.json.simple.parser.ParseException e) {
+			throw new TeamFormatException("\"" + jsonString
+					+ "\" is not a JSON String");
+		}
+
+		return parseJSON(team);
+	}
+
+	/**
 	 * load team from JSON object
 	 * 
 	 * @param team
@@ -108,8 +129,7 @@ public class Team implements Streamable {
 	 * @throws TeamFormatException
 	 *             if the JSON object is not a valid team object
 	 */
-	public static Team parseJSON(final JSONObject team)
-			throws TeamFormatException {
+	static Team parseJSON(final JSONObject team) throws TeamFormatException {
 		final int identifier = parseIdentifier(team);
 		final String name = parseName(team);
 		final URL logoUrl = parseLogoUrl(team);

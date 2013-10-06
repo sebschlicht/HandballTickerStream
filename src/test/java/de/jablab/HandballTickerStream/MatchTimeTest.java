@@ -4,14 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 
-public class MatchTimeTest {
+public class MatchTimeTest extends StreamableTest {
 
 	private static final int VALID_MINUTE = 36;
 	private static final MatchPhase VALID_PHASE = MatchPhase.SECOND;
@@ -19,7 +18,6 @@ public class MatchTimeTest {
 	private static final String MALFORMED_MINUTE = "nominute";
 
 	private static MatchTime SOURCE_MATCH_TIME;
-	private JSONObject sourceMatchTimeObject;
 
 	private MatchTime matchTime;
 
@@ -30,12 +28,12 @@ public class MatchTimeTest {
 
 	@Before
 	public void setUp() {
-		this.sourceMatchTimeObject = SOURCE_MATCH_TIME.toJSON();
+		this.sourceObject = SOURCE_MATCH_TIME.toJSON();
 	}
 
 	private void loadMatchTime(final boolean error) {
 		try {
-			this.matchTime = MatchTime.parseJSON(this.sourceMatchTimeObject);
+			this.matchTime = MatchTime.parseJSON(this.sourceObject);
 		} catch (final MatchTimeFormatException e) {
 			if (!error) {
 				e.printStackTrace();
@@ -58,26 +56,21 @@ public class MatchTimeTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testMatchTimeMinuteMissing() {
-		this.sourceMatchTimeObject.put(HandballTickerStream.MatchTime.KEY_MINUTE,
-				null);
+		this.putToObject(HandballTickerStream.MatchTime.KEY_MINUTE, null);
 		this.loadMatchTime(true);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testMatchTimeMinuteMalformed() {
-		this.sourceMatchTimeObject.put(HandballTickerStream.MatchTime.KEY_MINUTE,
+		this.putToObject(HandballTickerStream.MatchTime.KEY_MINUTE,
 				MALFORMED_MINUTE);
 		this.loadMatchTime(true);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testMatchTimePhaseMissing() {
-		this.sourceMatchTimeObject
-				.put(HandballTickerStream.MatchTime.KEY_PHASE, null);
+		this.putToObject(HandballTickerStream.MatchTime.KEY_PHASE, null);
 		this.loadMatchTime(true);
 	}
 

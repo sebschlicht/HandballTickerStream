@@ -4,58 +4,52 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.io.IOException;
 
 import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.MatchPhase;
-import de.jablab.HandballTickerStream.MatchTime;
 import de.jablab.HandballTickerStream.StreamItem;
+import de.jablab.HandballTickerStream.StreamItemTest;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 
-public class PhaseEndItemTest {
+public class PhaseEndItemTest extends StreamItemTest {
 
-	private static Date VALID_PUBLISHED;
-	private static final MatchTime VALID_TIME = new MatchTime(35,
-			MatchPhase.SECOND);
-	private static final String VALID_MESSAGE = "Half time!";
 	private static final MatchPhase VALID_BEFORE = MatchPhase.FIRST;
 	private static final MatchPhase VALID_AFTER = MatchPhase.HALF_TIME;
 
-	private static PhaseEndItem SOURCE_ITEM;
-	private JSONObject sourceItemObject;
+	private static PhaseEndItem SOURCE_PHASE_END_ITEM;
+	private JSONObject sourceObjectObject;
 
 	private PhaseEndItem item;
 
 	@BeforeClass
 	public static void beforeClass() {
-		final Calendar calendar = Calendar.getInstance();
-		// month is zero-based -> October
-		calendar.set(2013, 9, 2, 11, 52, 34);
-		VALID_PUBLISHED = calendar.getTime();
+		StreamItemTest.beforeClass();
 
 		SOURCE_ITEM = new PhaseEndItem(VALID_PUBLISHED, VALID_TIME,
 				VALID_MESSAGE, VALID_BEFORE, VALID_AFTER);
+		SOURCE_PHASE_END_ITEM = (PhaseEndItem) SOURCE_ITEM;
 	}
 
 	@Before
-	public void setUp() {
-		this.sourceItemObject = SOURCE_ITEM.toJSON();
+	public void setUp() throws IOException {
+		this.sourceObject = SOURCE_ITEM.toJSON();
+		this.sourceObjectObject = (JSONObject) this.sourceObject
+				.get(HandballTickerStream.StreamItem.KEY_OBJECT);
 	}
 
-	private void loadItem(final boolean error) {
+	@Override
+	protected void loadItem(final boolean error) {
 		try {
-			System.out.println(this.sourceItemObject.toJSONString());
-			this.item = (PhaseEndItem) StreamItem
-					.parseJSON(this.sourceItemObject.toJSONString());
+			this.item = (PhaseEndItem) StreamItem.parseJSON(this.sourceObject
+					.toJSONString());
 		} catch (final StreamItemFormatException e) {
-			if (!error) {
-				e.printStackTrace();
-			}
+			this.setErrTrace(e.getMessage());
 		}
 
 		if (error) {
@@ -65,18 +59,53 @@ public class PhaseEndItemTest {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	protected void putToItemObject(final String key, final Object value) {
+		this.sourceObjectObject.put(key, value);
+	}
+
 	@Test
 	public void testValidItem() {
 		this.loadItem(false);
+		this.checkStreamItem(this.item);
 
-		assertEquals(SOURCE_ITEM.getPublished(), this.item.getPublished());
-		assertEquals(SOURCE_ITEM.getTime(), this.item.getTime());
-		assertEquals(SOURCE_ITEM.getType(), this.item.getType());
-		assertEquals(SOURCE_ITEM.getMessage(), this.item.getMessage());
+		assertEquals(SOURCE_PHASE_END_ITEM.getBefore(), this.item.getBefore());
+		assertEquals(SOURCE_PHASE_END_ITEM.getAfter(), this.item.getAfter());
+		assertEquals(SOURCE_PHASE_END_ITEM.getSubType(), this.item.getSubType());
+	}
 
-		assertEquals(SOURCE_ITEM.getBefore(), this.item.getBefore());
-		assertEquals(SOURCE_ITEM.getAfter(), this.item.getAfter());
-		assertEquals(SOURCE_ITEM.getSubType(), this.item.getSubType());
+	@Test
+	public void testBeforeMissing() {
+		this.putToItemObject(
+				HandballTickerStream.StreamItem.PhaseEndItem.KEY_BEFORE, null);
+		this.loadItem(true);
+		this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEndItem.KEY_BEFORE);
+	}
+
+	@Test
+	public void testAfterMissing() {
+		this.putToItemObject(
+				HandballTickerStream.StreamItem.PhaseEndItem.KEY_AFTER, null);
+		this.loadItem(true);
+		this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEndItem.KEY_AFTER);
+	}
+
+	@Test
+	public void testSubTypeMissing() {
+		this.putToItemObject(
+				HandballTickerStream.StreamItem.PhaseEndItem.KEY_SUB_TYPE, null);
+		this.loadItem(false);
+	}
+
+	@Test
+	public void testItemObjectMissing() {
+		if (SOURCE_PHASE_END_ITEM.getSubType() != null) {
+			this.putToItemObject(
+					HandballTickerStream.StreamItem.PhaseEndItem.KEY_OBJECT,
+					null);
+			this.loadItem(true);
+			this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEndItem.KEY_OBJECT);
+		}
 	}
 
 }

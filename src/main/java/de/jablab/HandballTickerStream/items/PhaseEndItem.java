@@ -212,9 +212,10 @@ public class PhaseEndItem extends StreamItem {
 	 * 
 	 * @param phaseEndStreamItem
 	 *            phase end stream item JSON object
-	 * @return sub type of the phase end item
+	 * @return sub type of the phase end item<br>
+	 *         <b>null</b> if field missing
 	 * @throws PhaseEndItemFormatException
-	 *             if field missing or malformed
+	 *             if field malformed
 	 */
 	protected static PhaseEndSubType parseSubType(
 			final JSONObject phaseEndStreamItem)
@@ -233,11 +234,9 @@ public class PhaseEndItem extends StreamItem {
 								+ "\" is malformed: \"" + sSubType
 								+ "\" is not a phase end sub type");
 			}
-		} else {
-			throw new PhaseEndItemFormatException("field \""
-					+ HandballTickerStream.StreamItem.PhaseEndItem.KEY_SUB_TYPE
-					+ "\" is missing");
 		}
+
+		return null;
 	}
 
 }

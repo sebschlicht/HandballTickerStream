@@ -10,7 +10,7 @@ import de.jablab.HandballTickerStream.exceptions.ScoreFormatException;
  * @author sebschlicht
  * 
  */
-public class Score implements Streamable {
+public class Score extends Streamable {
 
 	/**
 	 * score of the home team
@@ -74,6 +74,27 @@ public class Score implements Streamable {
 	}
 
 	/**
+	 * load score from JSON
+	 * 
+	 * @param score
+	 *            score JSON
+	 * @throws ScoreFormatException
+	 *             if the JSON is not a valid score object
+	 */
+	public static Score parseJSON(final String jsonString)
+			throws ScoreFormatException {
+		JSONObject team;
+		try {
+			team = (JSONObject) JSON_PARSER.parse(jsonString);
+		} catch (org.json.simple.parser.ParseException e) {
+			throw new ScoreFormatException("\"" + jsonString
+					+ "\" is not a JSON String");
+		}
+
+		return parseJSON(team);
+	}
+
+	/**
 	 * load score from JSON object
 	 * 
 	 * @param score
@@ -81,8 +102,7 @@ public class Score implements Streamable {
 	 * @throws ScoreFormatException
 	 *             if the JSON object is not a valid score object
 	 */
-	public static Score parseJSON(final JSONObject score)
-			throws ScoreFormatException {
+	static Score parseJSON(final JSONObject score) throws ScoreFormatException {
 		final int home = parseHome(score);
 		final int guest = parseGuest(score);
 		return new Score(home, guest);

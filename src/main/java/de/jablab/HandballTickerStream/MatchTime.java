@@ -10,7 +10,7 @@ import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
  * @author sebschlicht
  * 
  */
-public class MatchTime implements Streamable {
+public class MatchTime extends Streamable {
 
 	/**
 	 * minute of the match
@@ -73,6 +73,44 @@ public class MatchTime implements Streamable {
 		return this.toJSON().toJSONString();
 	}
 
+	@Override
+	public boolean equals(final Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (o == this) {
+			return true;
+		}
+		if (!o.getClass().equals(this.getClass())) {
+			return false;
+		}
+
+		final MatchTime matchTime = (MatchTime) o;
+		return ((this.minute == matchTime.getMinute()) && (this.phase == matchTime
+				.getPhase()));
+	}
+
+	/**
+	 * load match time from JSON
+	 * 
+	 * @param jsonString
+	 *            match time JSON
+	 * @throws MatchTimeFormatException
+	 *             if the JSON is not a valid match time object
+	 */
+	public static MatchTime parseJSON(final String jsonString)
+			throws MatchTimeFormatException {
+		JSONObject matchTime;
+		try {
+			matchTime = (JSONObject) JSON_PARSER.parse(jsonString);
+		} catch (org.json.simple.parser.ParseException e) {
+			throw new MatchTimeFormatException("\"" + jsonString
+					+ "\" is not a JSON String");
+		}
+
+		return parseJSON(matchTime);
+	}
+
 	/**
 	 * load match time from JSON object
 	 * 
@@ -81,7 +119,7 @@ public class MatchTime implements Streamable {
 	 * @throws MatchTimeFormatException
 	 *             if the JSON object is not a valid match time object
 	 */
-	public static MatchTime parseJSON(final JSONObject matchTime)
+	static MatchTime parseJSON(final JSONObject matchTime)
 			throws MatchTimeFormatException {
 		final int minute = parseMinute(matchTime);
 		final MatchPhase phase = parsePhase(matchTime);

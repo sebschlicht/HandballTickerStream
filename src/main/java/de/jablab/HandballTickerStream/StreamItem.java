@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
@@ -18,18 +17,13 @@ import de.jablab.HandballTickerStream.items.PhaseEndItem;
  * @author sebschlicht
  * 
  */
-public class StreamItem implements Streamable {
+public class StreamItem extends Streamable {
 
 	/**
 	 * date formatter
 	 */
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss", Locale.GERMAN);
-
-	/**
-	 * JSON parser
-	 */
-	protected static final JSONParser JSON_PARSER = new JSONParser();
 
 	/**
 	 * exact time when published
@@ -127,6 +121,7 @@ public class StreamItem implements Streamable {
 		object.put(HandballTickerStream.StreamItem.KEY_TIME, this.time.toJSON());
 		object.put(HandballTickerStream.StreamItem.KEY_TYPE,
 				this.type.toString());
+		object.put(HandballTickerStream.StreamItem.KEY_MESSAGE, this.message);
 		return object;
 	}
 
@@ -153,9 +148,23 @@ public class StreamItem implements Streamable {
 					+ "\" is not a JSON String");
 		}
 
+		return parseJSON(streamItem);
+	}
+
+	/**
+	 * load any stream item from JSON object
+	 * 
+	 * @param streamItem
+	 *            stream item JSON object
+	 * @throws StreamItemFormatException
+	 *             if the JSON object is not a valid stream item object
+	 */
+	static StreamItem parseJSON(final JSONObject streamItem)
+			throws StreamItemFormatException {
 		final Date published = parsePublished(streamItem);
 		final MatchTime time = parseTime(streamItem);
 		final StreamItemType type = parseStreamItemType(streamItem);
+		final JSONObject object = parseObject(streamItem);
 		final String message = parseMessage(streamItem);
 
 		final StreamItem basicStreamItem = new StreamItem(published, time,
@@ -163,7 +172,7 @@ public class StreamItem implements Streamable {
 
 		switch (type) {
 			case PHASE_END:
-				return PhaseEndItem.parseJSON(basicStreamItem, streamItem);
+				return PhaseEndItem.parseJSON(basicStreamItem, object);
 
 			default:
 				return null;
@@ -260,6 +269,35 @@ public class StreamItem implements Streamable {
 		} else {
 			throw new StreamItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.KEY_TYPE
+					+ "\" is missing");
+		}
+	}
+
+	/**
+	 * parse the object field
+	 * 
+	 * @param streamItem
+	 *            stream item JSON object
+	 * @return <Type>Item JSON object
+	 * @throws StreamItemFormatException
+	 *             if field missing or malformed
+	 */
+	protected static JSONObject parseObject(final JSONObject streamItem)
+			throws StreamItemFormatException {
+		final Object object = streamItem
+				.get(HandballTickerStream.StreamItem.KEY_OBJECT);
+		if (object != null) {
+			if (object instanceof JSONObject) {
+				return (JSONObject) object;
+			} else {
+				throw new StreamItemFormatException("field \""
+						+ HandballTickerStream.StreamItem.KEY_OBJECT
+						+ "\" is malformed: \"" + object
+						+ "\" is not a JSON object");
+			}
+		} else {
+			throw new StreamItemFormatException("field \""
+					+ HandballTickerStream.StreamItem.KEY_OBJECT
 					+ "\" is missing");
 		}
 	}

@@ -4,16 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.jablab.HandballTickerStream.HandballTickerStream;
-import de.jablab.HandballTickerStream.Score;
 import de.jablab.HandballTickerStream.exceptions.ScoreFormatException;
 
-public class ScoreTest {
+public class ScoreTest extends StreamableTest {
 
 	private static final int VALID_SCORE_HOME = 22;
 	private static final int VALID_SCORE_GUEST = 21;
@@ -21,7 +18,6 @@ public class ScoreTest {
 	private static final String MALFORMED_SCORE = "noscore";
 
 	private static Score SOURCE_SCORE;
-	private JSONObject sourceScoreObject;
 
 	private Score score;
 
@@ -32,12 +28,12 @@ public class ScoreTest {
 
 	@Before
 	public void setUp() {
-		this.sourceScoreObject = SOURCE_SCORE.toJSON();
+		this.sourceObject = SOURCE_SCORE.toJSON();
 	}
 
 	private void loadScore(final boolean error) {
 		try {
-			this.score = Score.parseJSON(this.sourceScoreObject);
+			this.score = Score.parseJSON(this.sourceObject);
 		} catch (final ScoreFormatException e) {
 			if (!error) {
 				e.printStackTrace();
@@ -60,32 +56,26 @@ public class ScoreTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testHomeMissing() {
-		this.sourceScoreObject.put(HandballTickerStream.Score.KEY_HOME, null);
+		this.putToObject(HandballTickerStream.Score.KEY_HOME, null);
 		this.loadScore(true);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testHomeMalformed() {
-		this.sourceScoreObject.put(HandballTickerStream.Score.KEY_HOME,
-				MALFORMED_SCORE);
+		this.putToObject(HandballTickerStream.Score.KEY_HOME, MALFORMED_SCORE);
 		this.loadScore(true);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testGuestMissing() {
-		this.sourceScoreObject.put(HandballTickerStream.Score.KEY_GUEST, null);
+		this.putToObject(HandballTickerStream.Score.KEY_GUEST, null);
 		this.loadScore(true);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testGuestMalformed() {
-		this.sourceScoreObject.put(HandballTickerStream.Score.KEY_GUEST,
-				MALFORMED_SCORE);
+		this.putToObject(HandballTickerStream.Score.KEY_GUEST, MALFORMED_SCORE);
 		this.loadScore(true);
 	}
 

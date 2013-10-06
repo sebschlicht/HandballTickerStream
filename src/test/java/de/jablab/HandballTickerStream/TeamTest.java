@@ -7,16 +7,13 @@ import static org.junit.Assert.assertNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.jablab.HandballTickerStream.HandballTickerStream;
-import de.jablab.HandballTickerStream.Team;
 import de.jablab.HandballTickerStream.exceptions.TeamFormatException;
 
-public class TeamTest {
+public class TeamTest extends StreamableTest {
 
 	private static final int VALID_IDENTIFIER = 1;
 	private static final String VALID_NAME = "HSV Schienbeinknacker";
@@ -27,7 +24,6 @@ public class TeamTest {
 	private static final String MALFORMED_LOGO_URL_STRING = "test/ /de/logo.png";
 
 	private static Team SOURCE_TEAM;
-	private JSONObject sourceTeamObject;
 
 	private Team team;
 
@@ -39,12 +35,12 @@ public class TeamTest {
 
 	@Before
 	public void setUp() {
-		this.sourceTeamObject = SOURCE_TEAM.toJSON();
+		this.sourceObject = SOURCE_TEAM.toJSON();
 	}
 
 	private void loadTeam(final boolean error) {
 		try {
-			this.team = Team.parseJSON(this.sourceTeamObject);
+			this.team = Team.parseJSON(this.sourceObject);
 		} catch (final TeamFormatException e) {
 			if (!error) {
 				e.printStackTrace();
@@ -68,39 +64,33 @@ public class TeamTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testIdentifierMissing() {
-		this.sourceTeamObject.put(HandballTickerStream.Team.KEY_IDENTIFIER,
-				null);
+		this.putToObject(HandballTickerStream.Team.KEY_IDENTIFIER, null);
 		this.loadTeam(true);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testIdentifierMalformed() {
-		this.sourceTeamObject.put(HandballTickerStream.Team.KEY_IDENTIFIER,
+		this.putToObject(HandballTickerStream.Team.KEY_IDENTIFIER,
 				MALFORMED_IDENTIFIER);
 		this.loadTeam(true);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testNameMissing() {
-		this.sourceTeamObject.put(HandballTickerStream.Team.KEY_NAME, null);
+		this.putToObject(HandballTickerStream.Team.KEY_NAME, null);
 		this.loadTeam(true);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testLogoUrlMissing() {
-		this.sourceTeamObject.put(HandballTickerStream.Team.KEY_LOGO_URL, null);
+		this.putToObject(HandballTickerStream.Team.KEY_LOGO_URL, null);
 		this.loadTeam(false);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testLogoUrlMalformed() {
-		this.sourceTeamObject.put(HandballTickerStream.Team.KEY_LOGO_URL,
+		this.putToObject(HandballTickerStream.Team.KEY_LOGO_URL,
 				MALFORMED_LOGO_URL_STRING);
 		this.loadTeam(true);
 	}
