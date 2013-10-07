@@ -47,6 +47,12 @@ public class HandballTickerStream {
 
 		}
 
+		public class TextItem {
+
+			public static final String KEY_MESSAGE = "message";
+
+		}
+
 	}
 
 }

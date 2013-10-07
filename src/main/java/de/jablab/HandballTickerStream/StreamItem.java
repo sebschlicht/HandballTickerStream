@@ -10,6 +10,8 @@ import org.json.simple.JSONObject;
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 import de.jablab.HandballTickerStream.items.PhaseEndItem;
+import de.jablab.HandballTickerStream.items.StreamItemInformation;
+import de.jablab.HandballTickerStream.items.TextItem;
 
 /**
  * basic item for the handball ticker stream
@@ -17,7 +19,7 @@ import de.jablab.HandballTickerStream.items.PhaseEndItem;
  * @author sebschlicht
  * 
  */
-public class StreamItem extends Streamable {
+public abstract class StreamItem extends Streamable {
 
 	/**
 	 * date formatter
@@ -112,6 +114,11 @@ public class StreamItem extends Streamable {
 		this.message = message;
 	}
 
+	/**
+	 * @return JSON object containing the type specific data
+	 */
+	protected abstract JSONObject getObjectJSON();
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSON() {
@@ -121,7 +128,12 @@ public class StreamItem extends Streamable {
 		object.put(HandballTickerStream.StreamItem.KEY_TIME, this.time.toJSON());
 		object.put(HandballTickerStream.StreamItem.KEY_TYPE,
 				this.type.toString());
-		object.put(HandballTickerStream.StreamItem.KEY_MESSAGE, this.message);
+		object.put(HandballTickerStream.StreamItem.KEY_OBJECT,
+				this.getObjectJSON());
+		if (this.message != null) {
+			object.put(HandballTickerStream.StreamItem.KEY_MESSAGE,
+					this.message);
+		}
 		return object;
 	}
 
@@ -148,35 +160,40 @@ public class StreamItem extends Streamable {
 					+ "\" is not a JSON String");
 		}
 
-		return parseJSON(streamItem);
+		final StreamItemType type = parseStreamItemType(streamItem);
+
+		switch (type) {
+			case PHASE_END:
+				return PhaseEndItem.parseJSON(jsonString);
+
+			case TEXT:
+				return TextItem.parseJSON(jsonString);
+
+				// TODO: call item specific parsing methods
+
+			default:
+				throw new IllegalArgumentException("stream item type \"" + type
+						+ "\" not implemented!");
+		}
 	}
 
 	/**
-	 * load any stream item from JSON object
+	 * load the basic stream item from JSON object
 	 * 
 	 * @param streamItem
 	 *            stream item JSON object
 	 * @throws StreamItemFormatException
 	 *             if the JSON object is not a valid stream item object
 	 */
-	static StreamItem parseJSON(final JSONObject streamItem)
-			throws StreamItemFormatException {
+	protected static StreamItemInformation parseStreamItemJSON(
+			final JSONObject streamItem) throws StreamItemFormatException {
 		final Date published = parsePublished(streamItem);
 		final MatchTime time = parseTime(streamItem);
 		final StreamItemType type = parseStreamItemType(streamItem);
 		final JSONObject object = parseObject(streamItem);
 		final String message = parseMessage(streamItem);
 
-		final StreamItem basicStreamItem = new StreamItem(published, time,
-				type, message);
-
-		switch (type) {
-			case PHASE_END:
-				return PhaseEndItem.parseJSON(basicStreamItem, object);
-
-			default:
-				return null;
-		}
+		return new StreamItemInformation(published, time, type, object, message);
 	}
 
 	/**

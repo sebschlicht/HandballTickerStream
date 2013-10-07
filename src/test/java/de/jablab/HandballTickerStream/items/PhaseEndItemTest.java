@@ -4,10 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.io.IOException;
-
-import org.json.simple.JSONObject;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,7 +19,6 @@ public class PhaseEndItemTest extends StreamItemTest {
 	private static final MatchPhase VALID_AFTER = MatchPhase.HALF_TIME;
 
 	private static PhaseEndItem SOURCE_PHASE_END_ITEM;
-	private JSONObject sourceObjectObject;
 
 	private PhaseEndItem item;
 
@@ -31,16 +26,9 @@ public class PhaseEndItemTest extends StreamItemTest {
 	public static void beforeClass() {
 		StreamItemTest.beforeClass();
 
-		SOURCE_ITEM = new PhaseEndItem(VALID_PUBLISHED, VALID_TIME,
+		SOURCE_PHASE_END_ITEM = new PhaseEndItem(VALID_PUBLISHED, VALID_TIME,
 				VALID_MESSAGE, VALID_BEFORE, VALID_AFTER);
-		SOURCE_PHASE_END_ITEM = (PhaseEndItem) SOURCE_ITEM;
-	}
-
-	@Before
-	public void setUp() throws IOException {
-		this.sourceObject = SOURCE_ITEM.toJSON();
-		this.sourceObjectObject = (JSONObject) this.sourceObject
-				.get(HandballTickerStream.StreamItem.KEY_OBJECT);
+		SOURCE_ITEM = SOURCE_PHASE_END_ITEM;
 	}
 
 	@Override
@@ -57,11 +45,6 @@ public class PhaseEndItemTest extends StreamItemTest {
 		} else {
 			assertNotNull(this.item);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	protected void putToItemObject(final String key, final Object value) {
-		this.sourceObjectObject.put(key, value);
 	}
 
 	@Test
