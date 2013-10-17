@@ -6,7 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ PhaseEndItemTest.class, PhaseEndSubTypeTest.class,
-		ScoreItemTest.class, ScoringTypeTest.class, TextItemTest.class })
+		TextItemTest.class, ScoreItemTest.class, ScoringTypeTest.class,
+		DisciplineTest.class })
 public class StreamItemTests {
 
 }

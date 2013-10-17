@@ -62,6 +62,14 @@ public class HandballTickerStream {
 
 		}
 
+		public class FoulItem {
+
+			public static final String KEY_PLAYER = "player";
+			public static final String KEY_DISCIPLINES = "disciplines";
+			public static final String KEY_VICTIM = "victim";
+
+		}
+
 	}
 
 	public class Player {
