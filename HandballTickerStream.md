@@ -329,10 +329,10 @@ The type of the stream item has to be `foul` so it will be considered a signal f
                 "red"
             ],
             "victim": {
-            	"id": "12",
-                "number": "1",
-                "name": "Mr. T",
-                "team": "home"
+            	"id": "154",
+                "number": "13",
+                "name": "Mr. P",
+                "team": "guest"
             }
         },
         ...

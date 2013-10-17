@@ -64,6 +64,7 @@ public class ScoreTest extends StreamableTest {
 	public void testHomeMalformed() {
 		this.putToObject(HandballTickerStream.Score.KEY_HOME, MALFORMED_SCORE);
 		this.loadScore(true);
+		this.checkForMalformedField(HandballTickerStream.Score.KEY_HOME);
 	}
 
 	@Test
@@ -77,6 +78,7 @@ public class ScoreTest extends StreamableTest {
 	public void testGuestMalformed() {
 		this.putToObject(HandballTickerStream.Score.KEY_GUEST, MALFORMED_SCORE);
 		this.loadScore(true);
+		this.checkForMalformedField(HandballTickerStream.Score.KEY_GUEST);
 	}
 
 }

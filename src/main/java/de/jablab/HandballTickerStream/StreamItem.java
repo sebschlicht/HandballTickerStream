@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
+import de.jablab.HandballTickerStream.items.FoulItem;
 import de.jablab.HandballTickerStream.items.PhaseEndItem;
 import de.jablab.HandballTickerStream.items.ScoreItem;
 import de.jablab.HandballTickerStream.items.StreamItemInformation;
@@ -173,7 +174,8 @@ public abstract class StreamItem extends Streamable {
 			case SCORE:
 				return ScoreItem.parseJSON(jsonString);
 
-				// TODO: call item specific parsing methods
+			case FOUL:
+				return FoulItem.parseJSON(jsonString);
 
 			default:
 				throw new IllegalArgumentException("stream item type \"" + type

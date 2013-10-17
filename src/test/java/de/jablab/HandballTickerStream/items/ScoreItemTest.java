@@ -74,6 +74,15 @@ public class ScoreItemTest extends StreamItemTest {
 	}
 
 	@Test
+	public void testScoreMalformed() {
+		this.putToItemObject(
+				HandballTickerStream.StreamItem.ScoreItem.KEY_SCORE,
+				MALFORMED_JSON_OBJECT);
+		this.loadItem(true);
+		this.checkForMalformedField(HandballTickerStream.StreamItem.ScoreItem.KEY_SCORE);
+	}
+
+	@Test
 	public void testTeamMissing() {
 		this.putToItemObject(
 				HandballTickerStream.StreamItem.ScoreItem.KEY_TEAM_ROLE, null);
@@ -95,6 +104,15 @@ public class ScoreItemTest extends StreamItemTest {
 				HandballTickerStream.StreamItem.ScoreItem.KEY_PLAYER, null);
 		this.loadItem(false);
 		assertNull(this.item.getPlayer());
+	}
+
+	@Test
+	public void testPlayerMalformed() {
+		this.putToItemObject(
+				HandballTickerStream.StreamItem.ScoreItem.KEY_PLAYER,
+				MALFORMED_JSON_OBJECT);
+		this.loadItem(true);
+		this.checkForMalformedField(HandballTickerStream.StreamItem.ScoreItem.KEY_PLAYER);
 	}
 
 }

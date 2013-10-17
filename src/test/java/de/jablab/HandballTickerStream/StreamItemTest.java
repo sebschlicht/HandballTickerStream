@@ -18,8 +18,6 @@ public abstract class StreamItemTest extends StreamableTest {
 	protected static final String VALID_MESSAGE = "Half time!";
 
 	private static final String MALFORMED_PUBLISHED = "nodatetime";
-	private static final String MALFORMED_TIME = "nomatchtime";
-	private static final String MALFORMED_TYPE = "notype";
 
 	protected static StreamItem SOURCE_ITEM;
 
@@ -70,6 +68,7 @@ public abstract class StreamItemTest extends StreamableTest {
 		this.putToObject(HandballTickerStream.StreamItem.KEY_PUBLISHED,
 				MALFORMED_PUBLISHED);
 		this.loadItem(true);
+		this.checkForMalformedField(HandballTickerStream.StreamItem.KEY_PUBLISHED);
 	}
 
 	@Test
@@ -82,8 +81,9 @@ public abstract class StreamItemTest extends StreamableTest {
 	@Test
 	public void testTimeMalformed() {
 		this.putToObject(HandballTickerStream.StreamItem.KEY_TIME,
-				MALFORMED_TIME);
+				MALFORMED_JSON_OBJECT);
 		this.loadItem(true);
+		this.checkForMalformedField(HandballTickerStream.StreamItem.KEY_TIME);
 	}
 
 	@Test
@@ -94,17 +94,18 @@ public abstract class StreamItemTest extends StreamableTest {
 	}
 
 	@Test
-	public void testTypeMalformed() {
-		this.putToObject(HandballTickerStream.StreamItem.KEY_TYPE,
-				MALFORMED_TYPE);
-		this.loadItem(true);
-	}
-
-	@Test
 	public void testObjectMissing() {
 		this.putToObject(HandballTickerStream.StreamItem.KEY_OBJECT, null);
 		this.loadItem(true);
 		this.checkForMissingField(HandballTickerStream.StreamItem.KEY_OBJECT);
+	}
+
+	@Test
+	public void testObjectMalformed() {
+		this.putToObject(HandballTickerStream.StreamItem.KEY_OBJECT,
+				MALFORMED_JSON_OBJECT);
+		this.loadItem(true);
+		this.checkForMalformedField(HandballTickerStream.StreamItem.KEY_OBJECT);
 	}
 
 	@Test

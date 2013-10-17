@@ -132,10 +132,21 @@ public class Player extends Streamable {
 		}
 
 		final Player player = (Player) o;
-		return ((player.getId() == this.id)
+		if (player.getId() == null) {
+			if (this.id != null) {
+				return false;
+			}
+		}
+		if (player.getName() == null) {
+			if (this.name != null) {
+				return false;
+			}
+		}
+
+		return (((player.getId() == null) || player.getId().equals(this.id))
 				&& (player.getNumber() == this.number)
-				&& ((player.getName() == this.name) || ((player.getName() != null) && (player
-						.getName().equals(this.name)))) && (player.getTeam() == this.team));
+				&& ((player.getName() == null) || player.getName().equals(
+						this.name)) && (player.getTeam() == this.team));
 	}
 
 	/**

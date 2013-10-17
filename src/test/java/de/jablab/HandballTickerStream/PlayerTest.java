@@ -70,6 +70,7 @@ public class PlayerTest extends StreamableTest {
 		this.putToObject(HandballTickerStream.Player.KEY_IDENTIFIER,
 				MALFORMED_NUMBER);
 		this.loadPlayer(true);
+		this.checkForMalformedField(HandballTickerStream.Player.KEY_IDENTIFIER);
 	}
 
 	@Test
@@ -84,6 +85,7 @@ public class PlayerTest extends StreamableTest {
 		this.putToObject(HandballTickerStream.Player.KEY_NUMBER,
 				MALFORMED_NUMBER);
 		this.loadPlayer(true);
+		this.checkForMalformedField(HandballTickerStream.Player.KEY_NUMBER);
 	}
 
 	@Test

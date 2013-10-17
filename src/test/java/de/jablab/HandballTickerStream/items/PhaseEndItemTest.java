@@ -78,6 +78,7 @@ public class PhaseEndItemTest extends StreamItemTest {
 		this.putToItemObject(
 				HandballTickerStream.StreamItem.PhaseEndItem.KEY_SUB_TYPE, null);
 		this.loadItem(false);
+		assertNull(this.item.getSubType());
 	}
 
 	@Test
@@ -88,6 +89,17 @@ public class PhaseEndItemTest extends StreamItemTest {
 					null);
 			this.loadItem(true);
 			this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEndItem.KEY_OBJECT);
+		}
+	}
+
+	@Test
+	public void testItemObjectMalformed() {
+		if (SOURCE_PHASE_END_ITEM.getSubType() != null) {
+			this.putToItemObject(
+					HandballTickerStream.StreamItem.PhaseEndItem.KEY_OBJECT,
+					MALFORMED_JSON_OBJECT);
+			this.loadItem(true);
+			this.checkForMalformedField(HandballTickerStream.StreamItem.PhaseEndItem.KEY_OBJECT);
 		}
 	}
 

@@ -73,6 +73,7 @@ public class TeamTest extends StreamableTest {
 		this.putToObject(HandballTickerStream.Team.KEY_IDENTIFIER,
 				MALFORMED_IDENTIFIER);
 		this.loadTeam(true);
+		this.checkForMalformedField(HandballTickerStream.Team.KEY_IDENTIFIER);
 	}
 
 	@Test
@@ -93,6 +94,7 @@ public class TeamTest extends StreamableTest {
 		this.putToObject(HandballTickerStream.Team.KEY_LOGO_URL,
 				MALFORMED_LOGO_URL_STRING);
 		this.loadTeam(true);
+		this.checkForMalformedField(HandballTickerStream.Team.KEY_LOGO_URL);
 	}
 
 }
