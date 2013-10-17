@@ -73,6 +73,22 @@ public class Score extends Streamable {
 		return this.toJSON().toJSONString();
 	}
 
+	@Override
+	public boolean equals(final Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (o == this) {
+			return true;
+		}
+		if (!o.getClass().equals(this.getClass())) {
+			return false;
+		}
+
+		final Score score = (Score) o;
+		return ((score.getHome() == this.home) && (score.getGuest() == this.guest));
+	}
+
 	/**
 	 * load score from JSON
 	 * 

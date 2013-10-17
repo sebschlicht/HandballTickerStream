@@ -119,6 +119,25 @@ public class Player extends Streamable {
 		return this.toJSON().toJSONString();
 	}
 
+	@Override
+	public boolean equals(final Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (o == this) {
+			return true;
+		}
+		if (!o.getClass().equals(this.getClass())) {
+			return false;
+		}
+
+		final Player player = (Player) o;
+		return ((player.getId() == this.id)
+				&& (player.getNumber() == this.number)
+				&& ((player.getName() == this.name) || ((player.getName() != null) && (player
+						.getName().equals(this.name)))) && (player.getTeam() == this.team));
+	}
+
 	/**
 	 * load player from JSON
 	 * 
