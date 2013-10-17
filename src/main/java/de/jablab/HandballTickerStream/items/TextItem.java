@@ -60,7 +60,7 @@ public class TextItem extends StreamItem {
 	}
 
 	/**
-	 * load any text stream item from JSON object
+	 * load a text stream item from JSON object
 	 * 
 	 * @param jsonString
 	 *            text stream item JSON

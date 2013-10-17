@@ -53,6 +53,24 @@ public class HandballTickerStream {
 
 		}
 
+		public class ScoreItem {
+
+			public static final String KEY_SCORE = "score";
+			public static final String KEY_TEAM_ROLE = "team";
+			public static final String KEY_TYPE = "type";
+			public static final String KEY_PLAYER = "player";
+
+		}
+
+	}
+
+	public class Player {
+
+		public static final String KEY_IDENTIFIER = "id";
+		public static final String KEY_NUMBER = "number";
+		public static final String KEY_NAME = "name";
+		public static final String KEY_TEAM_ROLE = "team";
+
 	}
 
 }

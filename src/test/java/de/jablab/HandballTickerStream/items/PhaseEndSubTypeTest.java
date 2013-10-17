@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class PhaseEndSubTypeTest {
 
-	private static final String INVALID_SUB_TYPE = "nosubtype";
+	private static final String INVALID_SUB_TYPE = "nophaseendsubtype";
 
 	private PhaseEndSubType subType;
 

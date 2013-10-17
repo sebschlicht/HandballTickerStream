@@ -42,9 +42,7 @@ public class TeamTest extends StreamableTest {
 		try {
 			this.team = Team.parseJSON(this.sourceObject);
 		} catch (final TeamFormatException e) {
-			if (!error) {
-				e.printStackTrace();
-			}
+			this.setErrTrace(e.getMessage());
 		}
 
 		if (error) {
@@ -67,6 +65,7 @@ public class TeamTest extends StreamableTest {
 	public void testIdentifierMissing() {
 		this.putToObject(HandballTickerStream.Team.KEY_IDENTIFIER, null);
 		this.loadTeam(true);
+		this.checkForMissingField(HandballTickerStream.Team.KEY_IDENTIFIER);
 	}
 
 	@Test
@@ -80,6 +79,7 @@ public class TeamTest extends StreamableTest {
 	public void testNameMissing() {
 		this.putToObject(HandballTickerStream.Team.KEY_NAME, null);
 		this.loadTeam(true);
+		this.checkForMissingField(HandballTickerStream.Team.KEY_NAME);
 	}
 
 	@Test

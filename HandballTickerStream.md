@@ -62,6 +62,7 @@ A handball ticker stream holds information about the current progress of a match
 | second       | **No**    | [Object: Score](#score)                         | Specifies the score of the teams in the second half - if reached yet. |
 | items        | **No**    | List of [object: StreamItem](#stream-item)      | Lists all stream items representing updates - if any existing. |
 
+
 ## MatchTime
 
     {
@@ -82,6 +83,7 @@ A handball ticker stream holds information about the current progress of a match
 * second: match is in second half
 * finished: match has been finished
 
+
 ## Team
 
     {
@@ -96,6 +98,9 @@ A handball ticker stream holds information about the current progress of a match
 | name  | Yes       | String       | Specifies the team name displayed. |
 | logo  | **No**    | String (URL) | Specifies the URL to the team logo displayed - if available. |
 
+### Team roles
+* home: home team
+* guest: guest team
 
 
 ## Score
@@ -109,6 +114,7 @@ A handball ticker stream holds information about the current progress of a match
 | ----- | --------- | ---- | ----------- |
 | home  | Yes       | int  | Specifies the score of the home team. |
 | guest | Yes       | int  | Specifies the score of the guest team. |
+
 
 ## Stream item
 
@@ -277,17 +283,13 @@ The type of the stream item has to be `score` so it will be considered a signal 
 | ------- | --------- | ----------------------------- | ----------- |
 | score   | Yes       | [Object: Score](#score)       | Specifies the score of teams after the scoring. |
 | team    | Yes       | [TeamRole](#team-roles)       | Specifies the role of the team scored. |
-| type    | Yes       | [ScoringType](#scoring-types) | Specifies the type of the scoring. |
+| type    | **No**    | [ScoringType](#scoring-types) | Specifies the type of the scoring - if supposed to be shown. |
 | player  | **No**    | [Object: Player](#player)     | Specifies the player who scored - if known. |
 
 #### Scoring types
 * normal: no special kind of scoring
 * rush: scoring due to a rush
 * penalty: scoring due to a penalty throw
-
-#### Team roles
-* home: team marked and set as home team in the stream
-* guest: team marked and set as guest team in the stream
 
 #### Player
 

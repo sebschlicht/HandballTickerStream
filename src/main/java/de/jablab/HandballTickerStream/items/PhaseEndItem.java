@@ -107,11 +107,6 @@ public class PhaseEndItem extends StreamItem {
 		return object;
 	}
 
-	@Override
-	public String toJSONString() {
-		return this.toJSON().toJSONString();
-	}
-
 	/**
 	 * load any phase end stream item from JSON object
 	 * 

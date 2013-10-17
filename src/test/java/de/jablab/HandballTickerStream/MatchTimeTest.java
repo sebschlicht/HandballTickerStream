@@ -35,9 +35,7 @@ public class MatchTimeTest extends StreamableTest {
 		try {
 			this.matchTime = MatchTime.parseJSON(this.sourceObject);
 		} catch (final MatchTimeFormatException e) {
-			if (!error) {
-				e.printStackTrace();
-			}
+			this.setErrTrace(e.getMessage());
 		}
 
 		if (error) {
@@ -59,6 +57,7 @@ public class MatchTimeTest extends StreamableTest {
 	public void testMatchTimeMinuteMissing() {
 		this.putToObject(HandballTickerStream.MatchTime.KEY_MINUTE, null);
 		this.loadMatchTime(true);
+		this.checkForMissingField(HandballTickerStream.MatchTime.KEY_MINUTE);
 	}
 
 	@Test
@@ -72,6 +71,7 @@ public class MatchTimeTest extends StreamableTest {
 	public void testMatchTimePhaseMissing() {
 		this.putToObject(HandballTickerStream.MatchTime.KEY_PHASE, null);
 		this.loadMatchTime(true);
+		this.checkForMissingField(HandballTickerStream.MatchTime.KEY_PHASE);
 	}
 
 }

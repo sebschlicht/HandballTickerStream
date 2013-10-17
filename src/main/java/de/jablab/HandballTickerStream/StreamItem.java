@@ -205,7 +205,7 @@ public abstract class StreamItem extends Streamable {
 	 * @throws StreamItemFormatException
 	 *             if field missing or malformed
 	 */
-	protected static Date parsePublished(final JSONObject streamItem)
+	private static Date parsePublished(final JSONObject streamItem)
 			throws StreamItemFormatException {
 		final String sPublished = (String) streamItem
 				.get(HandballTickerStream.StreamItem.KEY_PUBLISHED);
@@ -234,7 +234,7 @@ public abstract class StreamItem extends Streamable {
 	 * @throws StreamItemFormatException
 	 *             if field missing, malformed or not a match time object
 	 */
-	protected static MatchTime parseTime(final JSONObject streamItem)
+	private static MatchTime parseTime(final JSONObject streamItem)
 			throws StreamItemFormatException {
 		final Object time = streamItem
 				.get(HandballTickerStream.StreamItem.KEY_TIME);
@@ -269,7 +269,7 @@ public abstract class StreamItem extends Streamable {
 	 * @throws StreamItemFormatException
 	 *             if field missing or malformed
 	 */
-	protected static StreamItemType parseStreamItemType(
+	private static StreamItemType parseStreamItemType(
 			final JSONObject streamItem) throws StreamItemFormatException {
 		final String sType = (String) streamItem
 				.get(HandballTickerStream.StreamItem.KEY_TYPE);
@@ -299,7 +299,7 @@ public abstract class StreamItem extends Streamable {
 	 * @throws StreamItemFormatException
 	 *             if field missing or malformed
 	 */
-	protected static JSONObject parseObject(final JSONObject streamItem)
+	private static JSONObject parseObject(final JSONObject streamItem)
 			throws StreamItemFormatException {
 		final Object object = streamItem
 				.get(HandballTickerStream.StreamItem.KEY_OBJECT);
@@ -327,7 +327,7 @@ public abstract class StreamItem extends Streamable {
 	 * @return message displayed instead of a generated value<br>
 	 *         <b>null</b> if field missing
 	 */
-	protected static String parseMessage(final JSONObject streamItem) {
+	private static String parseMessage(final JSONObject streamItem) {
 		return (String) streamItem
 				.get(HandballTickerStream.StreamItem.KEY_MESSAGE);
 	}

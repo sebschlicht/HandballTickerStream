@@ -19,11 +19,11 @@ public abstract class Streamable {
 	/**
 	 * @return JSON object
 	 */
-	abstract JSONObject toJSON();
+	public abstract JSONObject toJSON();
 
 	/**
 	 * @return JSON String representing the object
 	 */
-	abstract String toJSONString();
+	public abstract String toJSONString();
 
 }

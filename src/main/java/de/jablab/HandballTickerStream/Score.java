@@ -83,15 +83,15 @@ public class Score extends Streamable {
 	 */
 	public static Score parseJSON(final String jsonString)
 			throws ScoreFormatException {
-		JSONObject team;
+		JSONObject score;
 		try {
-			team = (JSONObject) JSON_PARSER.parse(jsonString);
+			score = (JSONObject) JSON_PARSER.parse(jsonString);
 		} catch (org.json.simple.parser.ParseException e) {
 			throw new ScoreFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
 
-		return parseJSON(team);
+		return parseJSON(score);
 	}
 
 	/**
@@ -102,7 +102,8 @@ public class Score extends Streamable {
 	 * @throws ScoreFormatException
 	 *             if the JSON object is not a valid score object
 	 */
-	static Score parseJSON(final JSONObject score) throws ScoreFormatException {
+	public static Score parseJSON(final JSONObject score)
+			throws ScoreFormatException {
 		final int home = parseHome(score);
 		final int guest = parseGuest(score);
 		return new Score(home, guest);

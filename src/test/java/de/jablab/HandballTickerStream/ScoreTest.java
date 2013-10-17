@@ -35,9 +35,7 @@ public class ScoreTest extends StreamableTest {
 		try {
 			this.score = Score.parseJSON(this.sourceObject);
 		} catch (final ScoreFormatException e) {
-			if (!error) {
-				e.printStackTrace();
-			}
+			this.setErrTrace(e.getMessage());
 		}
 
 		if (error) {
@@ -59,6 +57,7 @@ public class ScoreTest extends StreamableTest {
 	public void testHomeMissing() {
 		this.putToObject(HandballTickerStream.Score.KEY_HOME, null);
 		this.loadScore(true);
+		this.checkForMissingField(HandballTickerStream.Score.KEY_HOME);
 	}
 
 	@Test
@@ -71,6 +70,7 @@ public class ScoreTest extends StreamableTest {
 	public void testGuestMissing() {
 		this.putToObject(HandballTickerStream.Score.KEY_GUEST, null);
 		this.loadScore(true);
+		this.checkForMissingField(HandballTickerStream.Score.KEY_GUEST);
 	}
 
 	@Test
