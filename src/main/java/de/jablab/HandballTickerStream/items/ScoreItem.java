@@ -11,6 +11,7 @@ import de.jablab.HandballTickerStream.Score;
 import de.jablab.HandballTickerStream.StreamItem;
 import de.jablab.HandballTickerStream.StreamItemType;
 import de.jablab.HandballTickerStream.TeamRole;
+import de.jablab.HandballTickerStream.exceptions.PlayerFormatException;
 import de.jablab.HandballTickerStream.exceptions.ScoreFormatException;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 import de.jablab.HandballTickerStream.exceptions.items.ScoreItemFormatException;
@@ -162,9 +163,14 @@ public class ScoreItem extends StreamItem {
 
 		if (streamItemInformation.getType() == StreamItemType.SCORE) {
 			final Score score = parseScore(object);
+			final TeamRole team = parseTeamRole(object);
+			final ScoringType type = parseScoringType(object);
+			final Player player = parsePlayer(object);
 
-			// TODO
-			return null;
+			return new ScoreItem(streamItemInformation.getPublished(),
+					streamItemInformation.getTime(),
+					streamItemInformation.getMessage(), score, team, type,
+					player);
 		} else {
 			throw new ScoreItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.KEY_TYPE
@@ -206,6 +212,102 @@ public class ScoreItem extends StreamItem {
 					+ HandballTickerStream.StreamItem.ScoreItem.KEY_SCORE
 					+ "\" is missing");
 		}
+	}
+
+	/**
+	 * parse the team field
+	 * 
+	 * @param object
+	 *            score stream item object JSON object
+	 * @return role of the team scored
+	 * @throws ScoreItemFormatException
+	 *             if field missing or malformed
+	 */
+	private static TeamRole parseTeamRole(final JSONObject object)
+			throws ScoreItemFormatException {
+		final String sTeamRole = (String) object
+				.get(HandballTickerStream.StreamItem.ScoreItem.KEY_TEAM_ROLE);
+		if (sTeamRole != null) {
+			final TeamRole team = TeamRole.parseString(sTeamRole);
+			if (team != null) {
+				return team;
+			} else {
+				throw new ScoreItemFormatException(
+						"field \""
+								+ HandballTickerStream.StreamItem.ScoreItem.KEY_TEAM_ROLE
+								+ "\" is malformed: \"" + sTeamRole
+								+ "\" is not a team role");
+			}
+		} else {
+			throw new ScoreItemFormatException("field \""
+					+ HandballTickerStream.StreamItem.ScoreItem.KEY_TEAM_ROLE
+					+ "\" is missing");
+		}
+	}
+
+	/**
+	 * parse the type field
+	 * 
+	 * @param object
+	 *            score stream item object JSON object
+	 * @return type of the scoring<br>
+	 *         <b>null</b> if field missing
+	 * @throws ScoreItemFormatException
+	 *             if field malformed
+	 */
+	private static ScoringType parseScoringType(final JSONObject object)
+			throws ScoreItemFormatException {
+		final String sScoringType = (String) object
+				.get(HandballTickerStream.StreamItem.ScoreItem.KEY_TYPE);
+		if (sScoringType != null) {
+			final ScoringType scoringType = ScoringType
+					.parseString(sScoringType);
+			if (scoringType != null) {
+				return scoringType;
+			} else {
+				throw new ScoreItemFormatException("field \""
+						+ HandballTickerStream.StreamItem.ScoreItem.KEY_TYPE
+						+ "\" is malformed: \"" + sScoringType
+						+ "\" is not a scoring type");
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * parse the player field
+	 * 
+	 * @param object
+	 *            score stream item object JSON object
+	 * @return player who scored<br>
+	 *         <b>null</b> if field missing
+	 * @throws ScoreItemFormatException
+	 *             if field malformed or not a player object
+	 */
+	private static Player parsePlayer(final JSONObject object)
+			throws ScoreItemFormatException {
+		final Object player = object
+				.get(HandballTickerStream.StreamItem.ScoreItem.KEY_PLAYER);
+		if (player != null) {
+			if (player instanceof JSONObject) {
+				try {
+					return Player.parseJSON((JSONObject) player);
+				} catch (final PlayerFormatException e) {
+					throw new ScoreItemFormatException(
+							"field \""
+									+ HandballTickerStream.StreamItem.ScoreItem.KEY_PLAYER
+									+ "\" is not a player object", e);
+				}
+			} else {
+				throw new ScoreItemFormatException("field \""
+						+ HandballTickerStream.StreamItem.ScoreItem.KEY_PLAYER
+						+ "\" is malformed: \"" + player
+						+ "\" is not a JSON object");
+			}
+		}
+
+		return null;
 	}
 
 }

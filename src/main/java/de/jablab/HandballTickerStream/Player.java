@@ -148,7 +148,7 @@ public class Player extends Streamable {
 	 * @throws PlayerFormatException
 	 *             if the JSON object is not a valid player object
 	 */
-	static Player parseJSON(final JSONObject player)
+	public static Player parseJSON(final JSONObject player)
 			throws PlayerFormatException {
 		final Integer identifier = parseIdentifier(player);
 		final int number = parseNumber(player);
