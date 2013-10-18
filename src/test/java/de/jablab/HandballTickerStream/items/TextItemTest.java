@@ -60,9 +60,9 @@ public class TextItemTest extends StreamItemTest {
 	@Test
 	public void testTextItemMessageMissing() {
 		this.putToItemObject(
-				HandballTickerStream.StreamItem.TextItem.KEY_MESSAGE, null);
+				HandballTickerStream.StreamItem.Text.KEY_MESSAGE, null);
 		this.loadItem(true);
-		this.checkForMissingField(HandballTickerStream.StreamItem.TextItem.KEY_MESSAGE);
+		this.checkForMissingField(HandballTickerStream.StreamItem.Text.KEY_MESSAGE);
 	}
 
 }

@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.MatchTime;
 import de.jablab.HandballTickerStream.StreamItem;
+import de.jablab.HandballTickerStream.StreamItemInformation;
 import de.jablab.HandballTickerStream.StreamItemType;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 import de.jablab.HandballTickerStream.exceptions.items.TextItemFormatException;
@@ -54,13 +55,13 @@ public class TextItem extends StreamItem {
 	@SuppressWarnings("unchecked")
 	public JSONObject getObjectJSON() {
 		final JSONObject object = new JSONObject();
-		object.put(HandballTickerStream.StreamItem.TextItem.KEY_MESSAGE,
+		object.put(HandballTickerStream.StreamItem.Text.KEY_MESSAGE,
 				this.message);
 		return object;
 	}
 
 	/**
-	 * load a text stream item from JSON object
+	 * load a text stream item from JSON
 	 * 
 	 * @param jsonString
 	 *            text stream item JSON
@@ -108,12 +109,12 @@ public class TextItem extends StreamItem {
 	protected static String parseTextItemMessage(final JSONObject object)
 			throws TextItemFormatException {
 		final String message = (String) object
-				.get(HandballTickerStream.StreamItem.TextItem.KEY_MESSAGE);
+				.get(HandballTickerStream.StreamItem.Text.KEY_MESSAGE);
 		if (message != null) {
 			return message;
 		} else {
 			throw new TextItemFormatException("field \""
-					+ HandballTickerStream.StreamItem.TextItem.KEY_MESSAGE
+					+ HandballTickerStream.StreamItem.Text.KEY_MESSAGE
 					+ "\" is missing");
 		}
 	}

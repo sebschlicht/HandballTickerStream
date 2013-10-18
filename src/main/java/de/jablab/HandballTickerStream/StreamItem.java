@@ -12,7 +12,6 @@ import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 import de.jablab.HandballTickerStream.items.FoulItem;
 import de.jablab.HandballTickerStream.items.PhaseEndItem;
 import de.jablab.HandballTickerStream.items.ScoreItem;
-import de.jablab.HandballTickerStream.items.StreamItemInformation;
 import de.jablab.HandballTickerStream.items.TextItem;
 
 /**
@@ -157,7 +156,7 @@ public abstract class StreamItem extends Streamable {
 		JSONObject streamItem;
 		try {
 			streamItem = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		} catch (final org.json.simple.parser.ParseException e) {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}

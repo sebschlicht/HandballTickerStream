@@ -9,6 +9,7 @@ import de.jablab.HandballTickerStream.MatchTime;
 import de.jablab.HandballTickerStream.Player;
 import de.jablab.HandballTickerStream.Score;
 import de.jablab.HandballTickerStream.StreamItem;
+import de.jablab.HandballTickerStream.StreamItemInformation;
 import de.jablab.HandballTickerStream.StreamItemType;
 import de.jablab.HandballTickerStream.TeamRole;
 import de.jablab.HandballTickerStream.exceptions.PlayerFormatException;
@@ -138,7 +139,7 @@ public class ScoreItem extends StreamItem {
 	}
 
 	/**
-	 * load a score stream item from JSON object
+	 * load a score stream item from JSON
 	 * 
 	 * @param jsonString
 	 *            score stream item JSON

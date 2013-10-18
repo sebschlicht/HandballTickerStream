@@ -1,11 +1,9 @@
-package de.jablab.HandballTickerStream.items;
+package de.jablab.HandballTickerStream;
 
 import java.util.Date;
 
 import org.json.simple.JSONObject;
 
-import de.jablab.HandballTickerStream.MatchTime;
-import de.jablab.HandballTickerStream.StreamItemType;
 
 /**
  * wrapper for data to create any stream item

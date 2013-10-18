@@ -79,24 +79,24 @@ public class FoulItemTest extends StreamItemTest {
 	@Test
 	public void testPlayerMissing() {
 		this.putToItemObject(
-				HandballTickerStream.StreamItem.FoulItem.KEY_PLAYER, null);
+				HandballTickerStream.StreamItem.Foul.KEY_PLAYER, null);
 		this.loadItem(true);
-		this.checkForMissingField(HandballTickerStream.StreamItem.FoulItem.KEY_PLAYER);
+		this.checkForMissingField(HandballTickerStream.StreamItem.Foul.KEY_PLAYER);
 	}
 
 	@Test
 	public void testPlayerMalformed() {
 		this.putToItemObject(
-				HandballTickerStream.StreamItem.FoulItem.KEY_PLAYER,
+				HandballTickerStream.StreamItem.Foul.KEY_PLAYER,
 				MALFORMED_JSON_OBJECT);
 		this.loadItem(true);
-		this.checkForMalformedField(HandballTickerStream.StreamItem.FoulItem.KEY_PLAYER);
+		this.checkForMalformedField(HandballTickerStream.StreamItem.Foul.KEY_PLAYER);
 	}
 
 	@Test
 	public void testDisciplinesMissing() {
 		this.putToItemObject(
-				HandballTickerStream.StreamItem.FoulItem.KEY_DISCIPLINES, null);
+				HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES, null);
 		this.loadItem(false);
 		assertNull(this.item.getDisciplines());
 	}
@@ -104,7 +104,7 @@ public class FoulItemTest extends StreamItemTest {
 	@Test
 	public void testDisciplinesEmpty() {
 		this.putToItemObject(
-				HandballTickerStream.StreamItem.FoulItem.KEY_DISCIPLINES,
+				HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES,
 				EMPTY_DISCIPLINES);
 		this.loadItem(false);
 		assertNull(this.item.getDisciplines());
@@ -113,26 +113,26 @@ public class FoulItemTest extends StreamItemTest {
 	@Test
 	public void testDisciplinesMalformed() {
 		this.putToItemObject(
-				HandballTickerStream.StreamItem.FoulItem.KEY_DISCIPLINES,
+				HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES,
 				MALFORMED_JSON_ARRAY);
 		this.loadItem(true);
-		this.checkForMalformedField(HandballTickerStream.StreamItem.FoulItem.KEY_DISCIPLINES);
+		this.checkForMalformedField(HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES);
 	}
 
 	@Test
 	public void testVictimMissing() {
 		this.putToItemObject(
-				HandballTickerStream.StreamItem.FoulItem.KEY_VICTIM, null);
+				HandballTickerStream.StreamItem.Foul.KEY_VICTIM, null);
 		this.loadItem(false);
 	}
 
 	@Test
 	public void testVictimMalformed() {
 		this.putToItemObject(
-				HandballTickerStream.StreamItem.FoulItem.KEY_VICTIM,
+				HandballTickerStream.StreamItem.Foul.KEY_VICTIM,
 				MALFORMED_JSON_OBJECT);
 		this.loadItem(true);
-		this.checkForMalformedField(HandballTickerStream.StreamItem.FoulItem.KEY_VICTIM);
+		this.checkForMalformedField(HandballTickerStream.StreamItem.Foul.KEY_VICTIM);
 	}
 
 }

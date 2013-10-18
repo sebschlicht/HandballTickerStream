@@ -11,33 +11,39 @@ import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.MatchPhase;
 import de.jablab.HandballTickerStream.StreamItem;
 import de.jablab.HandballTickerStream.StreamItemTest;
+import de.jablab.HandballTickerStream.TeamRole;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 
-public class PhaseEndItemTest extends StreamItemTest {
+public class TimeoutPhaseEndItemTest extends PhaseEndItemTest {
 
 	private static final MatchPhase VALID_BEFORE = MatchPhase.FIRST;
-	private static final MatchPhase VALID_AFTER = MatchPhase.HALF_TIME;
+	private static final MatchPhase VALID_AFTER = MatchPhase.PAUSED;
+	private static final TeamRole VALID_TEAM_ROLE = TeamRole.GUEST;
 
-	private static PhaseEndItem SOURCE_PHASE_END_ITEM;
+	private static TimeoutPhaseEndItem SOURCE_TIMEOUT_ITEM;
 
-	private PhaseEndItem item;
+	private TimeoutPhaseEndItem item;
 
 	@BeforeClass
 	public static void beforeClass() {
 		StreamItemTest.beforeClass();
 
-		SOURCE_PHASE_END_ITEM = new PhaseEndItem(VALID_PUBLISHED, VALID_TIME,
-				VALID_MESSAGE, VALID_BEFORE, VALID_AFTER);
-		SOURCE_ITEM = SOURCE_PHASE_END_ITEM;
+		SOURCE_TIMEOUT_ITEM = new TimeoutPhaseEndItem(VALID_PUBLISHED,
+				VALID_TIME, VALID_MESSAGE, VALID_BEFORE, VALID_AFTER,
+				VALID_TEAM_ROLE);
+		SOURCE_ITEM = SOURCE_TIMEOUT_ITEM;
 	}
 
 	@Override
 	protected void loadItem(final boolean error) {
 		try {
-			this.item = (PhaseEndItem) StreamItem.parseJSON(this.sourceObject
-					.toJSONString());
+			this.item = (TimeoutPhaseEndItem) StreamItem
+					.parseJSON(this.sourceObject.toJSONString());
 		} catch (final StreamItemFormatException e) {
 			this.setErrTrace(e.getMessage());
+			if (!error) {
+				System.err.println(e.getMessage());
+			}
 		}
 
 		if (error) {
@@ -47,16 +53,18 @@ public class PhaseEndItemTest extends StreamItemTest {
 		}
 	}
 
+	@Override
 	@Test
 	public void testValidItem() {
 		this.loadItem(false);
 		this.checkStreamItem(this.item);
 
-		assertEquals(SOURCE_PHASE_END_ITEM.getBefore(), this.item.getBefore());
-		assertEquals(SOURCE_PHASE_END_ITEM.getAfter(), this.item.getAfter());
-		assertEquals(SOURCE_PHASE_END_ITEM.getSubType(), this.item.getSubType());
+		assertEquals(SOURCE_TIMEOUT_ITEM.getBefore(), this.item.getBefore());
+		assertEquals(SOURCE_TIMEOUT_ITEM.getAfter(), this.item.getAfter());
+		assertEquals(SOURCE_TIMEOUT_ITEM.getSubType(), this.item.getSubType());
 	}
 
+	@Override
 	@Test
 	public void testBeforeMissing() {
 		this.putToItemObject(
@@ -65,6 +73,7 @@ public class PhaseEndItemTest extends StreamItemTest {
 		this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEnd.KEY_BEFORE);
 	}
 
+	@Override
 	@Test
 	public void testAfterMissing() {
 		this.putToItemObject(
@@ -73,34 +82,20 @@ public class PhaseEndItemTest extends StreamItemTest {
 		this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEnd.KEY_AFTER);
 	}
 
+	@Override
 	@Test
 	public void testSubTypeMissing() {
 		this.putToItemObject(
 				HandballTickerStream.StreamItem.PhaseEnd.KEY_SUB_TYPE, null);
-		this.loadItem(false);
-		assertNull(this.item.getSubType());
+		this.loadItem(true);
 	}
 
 	@Test
-	public void testItemObjectMissing() {
-		if (SOURCE_PHASE_END_ITEM.getSubType() != null) {
-			this.putToItemObject(
-					HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT,
-					null);
-			this.loadItem(true);
-			this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT);
-		}
-	}
-
-	@Test
-	public void testItemObjectMalformed() {
-		if (SOURCE_PHASE_END_ITEM.getSubType() != null) {
-			this.putToItemObject(
-					HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT,
-					MALFORMED_JSON_OBJECT);
-			this.loadItem(true);
-			this.checkForMalformedField(HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT);
-		}
+	public void testSubTypeInvalid() {
+		this.putToItemObject(
+				HandballTickerStream.StreamItem.PhaseEnd.KEY_SUB_TYPE,
+				PhaseEndSubType.INJURY.toString());
+		this.loadItem(true);
 	}
 
 }
