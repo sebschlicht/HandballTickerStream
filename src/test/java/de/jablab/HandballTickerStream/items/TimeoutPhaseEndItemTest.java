@@ -9,8 +9,6 @@ import org.junit.Test;
 
 import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.MatchPhase;
-import de.jablab.HandballTickerStream.StreamItem;
-import de.jablab.HandballTickerStream.StreamItemTest;
 import de.jablab.HandballTickerStream.TeamRole;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 
@@ -26,19 +24,20 @@ public class TimeoutPhaseEndItemTest extends PhaseEndItemTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		StreamItemTest.beforeClass();
+		PhaseEndItemTest.beforeClass();
 
 		SOURCE_TIMEOUT_ITEM = new TimeoutPhaseEndItem(VALID_PUBLISHED,
 				VALID_TIME, VALID_MESSAGE, VALID_BEFORE, VALID_AFTER,
 				VALID_TEAM_ROLE);
+		SOURCE_PHASE_END_ITEM = SOURCE_TIMEOUT_ITEM;
 		SOURCE_ITEM = SOURCE_TIMEOUT_ITEM;
 	}
 
 	@Override
 	protected void loadItem(final boolean error) {
 		try {
-			this.item = (TimeoutPhaseEndItem) StreamItem
-					.parseJSON(this.sourceObject.toJSONString());
+			this.item = TimeoutPhaseEndItem.parseJSON(this.sourceObject
+					.toJSONString());
 		} catch (final StreamItemFormatException e) {
 			this.setErrTrace(e.getMessage());
 			if (!error) {
@@ -66,24 +65,6 @@ public class TimeoutPhaseEndItemTest extends PhaseEndItemTest {
 
 	@Override
 	@Test
-	public void testBeforeMissing() {
-		this.putToItemObject(
-				HandballTickerStream.StreamItem.PhaseEnd.KEY_BEFORE, null);
-		this.loadItem(true);
-		this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEnd.KEY_BEFORE);
-	}
-
-	@Override
-	@Test
-	public void testAfterMissing() {
-		this.putToItemObject(
-				HandballTickerStream.StreamItem.PhaseEnd.KEY_AFTER, null);
-		this.loadItem(true);
-		this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEnd.KEY_AFTER);
-	}
-
-	@Override
-	@Test
 	public void testSubTypeMissing() {
 		this.putToItemObject(
 				HandballTickerStream.StreamItem.PhaseEnd.KEY_SUB_TYPE, null);
@@ -96,6 +77,15 @@ public class TimeoutPhaseEndItemTest extends PhaseEndItemTest {
 				HandballTickerStream.StreamItem.PhaseEnd.KEY_SUB_TYPE,
 				PhaseEndSubType.INJURY.toString());
 		this.loadItem(true);
+	}
+
+	@Test
+	public void testTeamRoleMissing() {
+		this.putToPhaseEndObject(
+				HandballTickerStream.StreamItem.PhaseEnd.Timeout.KEY_TEAM_ROLE,
+				null);
+		this.loadItem(true);
+		this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEnd.Timeout.KEY_TEAM_ROLE);
 	}
 
 }

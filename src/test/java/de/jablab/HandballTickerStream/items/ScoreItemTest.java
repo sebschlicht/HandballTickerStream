@@ -10,7 +10,6 @@ import org.junit.Test;
 import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.Player;
 import de.jablab.HandballTickerStream.Score;
-import de.jablab.HandballTickerStream.StreamItem;
 import de.jablab.HandballTickerStream.StreamItemTest;
 import de.jablab.HandballTickerStream.TeamRole;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
@@ -40,8 +39,7 @@ public class ScoreItemTest extends StreamItemTest {
 	@Override
 	protected void loadItem(final boolean error) {
 		try {
-			this.item = (ScoreItem) StreamItem.parseJSON(this.sourceObject
-					.toJSONString());
+			this.item = ScoreItem.parseJSON(this.sourceObject.toJSONString());
 		} catch (final StreamItemFormatException e) {
 			this.setErrTrace(e.getMessage());
 		}

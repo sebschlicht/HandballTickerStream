@@ -8,7 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.jablab.HandballTickerStream.HandballTickerStream;
-import de.jablab.HandballTickerStream.StreamItem;
 import de.jablab.HandballTickerStream.StreamItemTest;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 
@@ -32,8 +31,7 @@ public class TextItemTest extends StreamItemTest {
 	@Override
 	protected void loadItem(final boolean error) {
 		try {
-			this.item = (TextItem) StreamItem.parseJSON(this.sourceObject
-					.toJSONString());
+			this.item = TextItem.parseJSON(this.sourceObject.toJSONString());
 		} catch (final StreamItemFormatException e) {
 			this.setErrTrace(e.getMessage());
 			if (!error) {
@@ -59,8 +57,8 @@ public class TextItemTest extends StreamItemTest {
 
 	@Test
 	public void testTextItemMessageMissing() {
-		this.putToItemObject(
-				HandballTickerStream.StreamItem.Text.KEY_MESSAGE, null);
+		this.putToItemObject(HandballTickerStream.StreamItem.Text.KEY_MESSAGE,
+				null);
 		this.loadItem(true);
 		this.checkForMissingField(HandballTickerStream.StreamItem.Text.KEY_MESSAGE);
 	}

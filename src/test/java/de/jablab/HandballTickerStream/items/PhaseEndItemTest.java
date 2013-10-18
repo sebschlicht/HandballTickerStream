@@ -4,12 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import org.json.simple.JSONObject;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.MatchPhase;
-import de.jablab.HandballTickerStream.StreamItem;
 import de.jablab.HandballTickerStream.StreamItemTest;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 
@@ -18,7 +19,9 @@ public class PhaseEndItemTest extends StreamItemTest {
 	private static final MatchPhase VALID_BEFORE = MatchPhase.FIRST;
 	private static final MatchPhase VALID_AFTER = MatchPhase.HALF_TIME;
 
-	private static PhaseEndItem SOURCE_PHASE_END_ITEM;
+	protected static PhaseEndItem SOURCE_PHASE_END_ITEM;
+
+	protected JSONObject sourceObjectObjectObject;
 
 	private PhaseEndItem item;
 
@@ -32,10 +35,23 @@ public class PhaseEndItemTest extends StreamItemTest {
 	}
 
 	@Override
+	@Before
+	public void setUp() {
+		super.setUp();
+		this.sourceObjectObjectObject = (JSONObject) this.sourceObjectObject
+				.get(HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void putToPhaseEndObject(final String key, final Object value) {
+		this.sourceObjectObjectObject.put(key, value);
+	}
+
+	@Override
 	protected void loadItem(final boolean error) {
 		try {
-			this.item = (PhaseEndItem) StreamItem.parseJSON(this.sourceObject
-					.toJSONString());
+			this.item = PhaseEndItem
+					.parseJSON(this.sourceObject.toJSONString());
 		} catch (final StreamItemFormatException e) {
 			this.setErrTrace(e.getMessage());
 		}
@@ -85,8 +101,7 @@ public class PhaseEndItemTest extends StreamItemTest {
 	public void testItemObjectMissing() {
 		if (SOURCE_PHASE_END_ITEM.getSubType() != null) {
 			this.putToItemObject(
-					HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT,
-					null);
+					HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT, null);
 			this.loadItem(true);
 			this.checkForMissingField(HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT);
 		}

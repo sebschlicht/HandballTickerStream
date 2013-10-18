@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import de.jablab.HandballTickerStream.HandballTickerStream;
 import de.jablab.HandballTickerStream.Player;
-import de.jablab.HandballTickerStream.StreamItem;
 import de.jablab.HandballTickerStream.StreamItemTest;
 import de.jablab.HandballTickerStream.TeamRole;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
@@ -48,8 +47,7 @@ public class FoulItemTest extends StreamItemTest {
 	@Override
 	protected void loadItem(final boolean error) {
 		try {
-			this.item = (FoulItem) StreamItem.parseJSON(this.sourceObject
-					.toJSONString());
+			this.item = FoulItem.parseJSON(this.sourceObject.toJSONString());
 		} catch (final StreamItemFormatException e) {
 			this.setErrTrace(e.getMessage());
 		}
@@ -78,16 +76,15 @@ public class FoulItemTest extends StreamItemTest {
 
 	@Test
 	public void testPlayerMissing() {
-		this.putToItemObject(
-				HandballTickerStream.StreamItem.Foul.KEY_PLAYER, null);
+		this.putToItemObject(HandballTickerStream.StreamItem.Foul.KEY_PLAYER,
+				null);
 		this.loadItem(true);
 		this.checkForMissingField(HandballTickerStream.StreamItem.Foul.KEY_PLAYER);
 	}
 
 	@Test
 	public void testPlayerMalformed() {
-		this.putToItemObject(
-				HandballTickerStream.StreamItem.Foul.KEY_PLAYER,
+		this.putToItemObject(HandballTickerStream.StreamItem.Foul.KEY_PLAYER,
 				MALFORMED_JSON_OBJECT);
 		this.loadItem(true);
 		this.checkForMalformedField(HandballTickerStream.StreamItem.Foul.KEY_PLAYER);
@@ -121,15 +118,14 @@ public class FoulItemTest extends StreamItemTest {
 
 	@Test
 	public void testVictimMissing() {
-		this.putToItemObject(
-				HandballTickerStream.StreamItem.Foul.KEY_VICTIM, null);
+		this.putToItemObject(HandballTickerStream.StreamItem.Foul.KEY_VICTIM,
+				null);
 		this.loadItem(false);
 	}
 
 	@Test
 	public void testVictimMalformed() {
-		this.putToItemObject(
-				HandballTickerStream.StreamItem.Foul.KEY_VICTIM,
+		this.putToItemObject(HandballTickerStream.StreamItem.Foul.KEY_VICTIM,
 				MALFORMED_JSON_OBJECT);
 		this.loadItem(true);
 		this.checkForMalformedField(HandballTickerStream.StreamItem.Foul.KEY_VICTIM);
