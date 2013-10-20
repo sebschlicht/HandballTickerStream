@@ -51,6 +51,12 @@ public class HandballTickerStream {
 
 			}
 
+			public class Injury {
+
+				public static final String KEY_PLAYER = "player";
+
+			}
+
 		}
 
 		public class Text {

@@ -112,6 +112,7 @@ public class TimeoutPhaseEndItem extends PhaseEndItem {
 			throw new TimeoutPhaseEndItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.PhaseEnd.KEY_SUB_TYPE
 					+ "\" is invalid: must be \"" + PhaseEndSubType.TIMEOUT
+					+ "\" but was \"" + phaseEndItemInformation.getSubType()
 					+ "\"");
 		}
 	}
