@@ -40,7 +40,7 @@ public class TeamTest extends StreamableTest {
 
 	private void loadTeam(final boolean error) {
 		try {
-			this.team = Team.parseJSON(this.sourceObject);
+			this.team = Team.loadFromJSON(this.sourceObject);
 		} catch (final TeamFormatException e) {
 			this.setErrTrace(e.getMessage());
 		}

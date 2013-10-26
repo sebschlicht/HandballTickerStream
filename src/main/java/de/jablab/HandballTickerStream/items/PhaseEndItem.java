@@ -256,11 +256,9 @@ public class PhaseEndItem extends StreamItem {
 						+ "\" is malformed: \"" + object
 						+ "\" is not a JSON object");
 			}
-		} else {
-			throw new PhaseEndItemFormatException("field \""
-					+ HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT
-					+ "\" is missing");
 		}
+
+		return null;
 	}
 
 }

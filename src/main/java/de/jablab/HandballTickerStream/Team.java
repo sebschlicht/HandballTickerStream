@@ -95,54 +95,28 @@ public class Team extends Streamable {
 		return object;
 	}
 
-	/**
-	 * load team from JSON
-	 * 
-	 * @param jsonString
-	 *            team JSON
-	 * @throws TeamFormatException
-	 *             if the JSON is not a valid team object
-	 */
 	public static Team parseJSON(final String jsonString)
 			throws TeamFormatException {
-		JSONObject team;
-		try {
-			team = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		final JSONObject teamObject = parseJSONObject(jsonString);
+		if (teamObject != null) {
+			return loadFromJSON(teamObject);
+		} else {
 			throw new TeamFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
-
-		return parseJSON(team);
 	}
 
-	/**
-	 * load team from JSON object
-	 * 
-	 * @param team
-	 *            team JSON object
-	 * @throws TeamFormatException
-	 *             if the JSON object is not a valid team object
-	 */
-	static Team parseJSON(final JSONObject team) throws TeamFormatException {
-		final int identifier = parseIdentifier(team);
-		final String name = parseName(team);
-		final URL logoUrl = parseLogoUrl(team);
+	public static Team loadFromJSON(final JSONObject teamObject)
+			throws TeamFormatException {
+		final int identifier = parseIdentifier(teamObject);
+		final String name = parseName(teamObject);
+		final URL logoUrl = parseLogoUrl(teamObject);
 		return new Team(identifier, name, logoUrl);
 	}
 
-	/**
-	 * parse the id field
-	 * 
-	 * @param team
-	 *            team JSON object
-	 * @return unique team identifier
-	 * @throws TeamFormatException
-	 *             if field missing or malformed
-	 */
-	private static int parseIdentifier(final JSONObject team)
+	private static int parseIdentifier(final JSONObject teamObject)
 			throws TeamFormatException {
-		final String sId = (String) team
+		final String sId = (String) teamObject
 				.get(HandballTickerStream.Team.KEY_IDENTIFIER);
 		if (sId != null) {
 			try {
@@ -159,18 +133,9 @@ public class Team extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the name field
-	 * 
-	 * @param team
-	 *            team JSON object
-	 * @return team name displayed
-	 * @throws TeamFormatException
-	 *             if field missing
-	 */
-	private static String parseName(final JSONObject team)
+	private static String parseName(final JSONObject teamObject)
 			throws TeamFormatException {
-		final String name = (String) team
+		final String name = (String) teamObject
 				.get(HandballTickerStream.Team.KEY_NAME);
 		if (name != null) {
 			return name;
@@ -180,19 +145,9 @@ public class Team extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the logo URL field
-	 * 
-	 * @param team
-	 *            team JSON object
-	 * @return URL to the team logo<br>
-	 *         <b>null</b> if field missing
-	 * @throws TeamFormatException
-	 *             if field malformed
-	 */
-	private static URL parseLogoUrl(final JSONObject team)
+	private static URL parseLogoUrl(final JSONObject teamObject)
 			throws TeamFormatException {
-		final String sLogoUrl = (String) team
+		final String sLogoUrl = (String) teamObject
 				.get(HandballTickerStream.Team.KEY_LOGO_URL);
 		if (sLogoUrl != null) {
 			try {

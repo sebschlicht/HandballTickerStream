@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import de.jablab.HandballTickerStream.exceptions.MatchTimeFormatException;
 import de.jablab.HandballTickerStream.exceptions.ScoreFormatException;
 import de.jablab.HandballTickerStream.exceptions.StreamFormatException;
+import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 import de.jablab.HandballTickerStream.exceptions.TeamFormatException;
 
 /**
@@ -166,45 +167,31 @@ public class Stream extends Streamable {
 		return stream;
 	}
 
-	/**
-	 * load handball ticker stream from JSON
-	 * 
-	 * @param jsonString
-	 *            stream JSON
-	 * @throws StreamFormatException
-	 *             if the JSON is not a valid stream object
-	 */
 	public static Stream parseJSON(final String jsonString)
 			throws StreamFormatException {
-		JSONObject stream;
-		try {
-			stream = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		final JSONObject streamObject = parseJSONObject(jsonString);
+		if (streamObject != null) {
+			return loadFromJSON(streamObject);
+		} else {
 			throw new StreamFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
+	}
 
-		final MatchTime time = parseTime(stream);
-		final Team home = parseHome(stream);
-		final Team guest = parseGuest(stream);
-		final Score first = parseFirst(stream);
-		final Score second = parseSecond(stream);
-		final List<StreamItem> items = parseItems(stream);
+	public static Stream loadFromJSON(final JSONObject streamObject)
+			throws StreamFormatException {
+		final MatchTime time = parseTime(streamObject);
+		final Team home = parseHome(streamObject);
+		final Team guest = parseGuest(streamObject);
+		final Score first = parseFirst(streamObject);
+		final Score second = parseSecond(streamObject);
+		final List<StreamItem> items = parseItems(streamObject);
 		return new Stream(time, home, guest, first, second, items);
 	}
 
-	/**
-	 * parse the time field
-	 * 
-	 * @param stream
-	 *            stream JSON object
-	 * @return current match time
-	 * @throws StreamFormatException
-	 *             if field missing, malformed or not a match time object
-	 */
-	private static MatchTime parseTime(final JSONObject stream)
+	private static MatchTime parseTime(final JSONObject streamObject)
 			throws StreamFormatException {
-		final Object time = stream.get(HandballTickerStream.KEY_TIME);
+		final Object time = streamObject.get(HandballTickerStream.KEY_TIME);
 		if (time != null) {
 			if (time instanceof JSONObject) {
 				try {
@@ -225,22 +212,13 @@ public class Stream extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the home field
-	 * 
-	 * @param stream
-	 *            stream JSON object
-	 * @return home team
-	 * @throws StreamFormatException
-	 *             if field missing, malformed or not a team object
-	 */
-	private static Team parseHome(final JSONObject stream)
+	private static Team parseHome(final JSONObject streamObject)
 			throws StreamFormatException {
-		final Object home = stream.get(HandballTickerStream.KEY_HOME);
+		final Object home = streamObject.get(HandballTickerStream.KEY_HOME);
 		if (home != null) {
 			if (home instanceof JSONObject) {
 				try {
-					return Team.parseJSON((JSONObject) home);
+					return Team.loadFromJSON((JSONObject) home);
 				} catch (final TeamFormatException e) {
 					throw new StreamFormatException("field \""
 							+ HandballTickerStream.KEY_HOME
@@ -257,22 +235,13 @@ public class Stream extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the guest field
-	 * 
-	 * @param stream
-	 *            stream JSON object
-	 * @return guest team
-	 * @throws StreamFormatException
-	 *             if field missing, malformed or not a team object
-	 */
-	private static Team parseGuest(final JSONObject stream)
+	private static Team parseGuest(final JSONObject streamObject)
 			throws StreamFormatException {
-		final Object guest = stream.get(HandballTickerStream.KEY_GUEST);
+		final Object guest = streamObject.get(HandballTickerStream.KEY_GUEST);
 		if (guest != null) {
 			if (guest instanceof JSONObject) {
 				try {
-					return Team.parseJSON((JSONObject) guest);
+					return Team.loadFromJSON((JSONObject) guest);
 				} catch (final TeamFormatException e) {
 					throw new StreamFormatException("field \""
 							+ HandballTickerStream.KEY_GUEST
@@ -290,18 +259,9 @@ public class Stream extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the first field
-	 * 
-	 * @param stream
-	 *            stream JSON object
-	 * @return score of the teams in the first half
-	 * @throws StreamFormatException
-	 *             if field missing, malformed or not a score object
-	 */
-	private static Score parseFirst(final JSONObject stream)
+	private static Score parseFirst(final JSONObject streamObject)
 			throws StreamFormatException {
-		final Object first = stream.get(HandballTickerStream.KEY_FIRST);
+		final Object first = streamObject.get(HandballTickerStream.KEY_FIRST);
 		if (first != null) {
 			if (first instanceof JSONObject) {
 				try {
@@ -323,19 +283,9 @@ public class Stream extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the second field
-	 * 
-	 * @param stream
-	 *            stream JSON object
-	 * @return score of the teams in the second half<br>
-	 *         <b>null</b> if field missing
-	 * @throws StreamFormatException
-	 *             if field malformed or not a score object
-	 */
-	private static Score parseSecond(final JSONObject stream)
+	private static Score parseSecond(final JSONObject streamObject)
 			throws StreamFormatException {
-		final Object second = stream.get(HandballTickerStream.KEY_SECOND);
+		final Object second = streamObject.get(HandballTickerStream.KEY_SECOND);
 		if (second != null) {
 			if (second instanceof JSONObject) {
 				try {
@@ -356,9 +306,9 @@ public class Stream extends Streamable {
 		return null;
 	}
 
-	private static List<StreamItem> parseItems(final JSONObject stream)
+	private static List<StreamItem> parseItems(final JSONObject streamObject)
 			throws StreamFormatException {
-		final Object oItems = stream.get(HandballTickerStream.KEY_ITEMS);
+		final Object oItems = streamObject.get(HandballTickerStream.KEY_ITEMS);
 		if (oItems != null) {
 			if (oItems instanceof JSONArray) {
 				final JSONArray aItems = (JSONArray) oItems;
@@ -367,10 +317,18 @@ public class Stream extends Streamable {
 					final List<StreamItem> items = new LinkedList<StreamItem>();
 					StreamItem item;
 
-					JSONObject jItem;
 					for (Object oItem : aItems) {
 						if (oItem instanceof JSONObject) {
-							item = StreamItem.parseJSON((JSONObject) oItem);
+							try {
+								item = StreamItem
+										.parseAnyJSON((JSONObject) oItem);
+								items.add(item);
+							} catch (final StreamItemFormatException e) {
+								throw new StreamFormatException("field \""
+										+ HandballTickerStream.KEY_ITEMS
+										+ "\" is malformed: \"" + oItem
+										+ "\" is not a stream item object", e);
+							}
 						} else {
 							throw new StreamFormatException("field \""
 									+ HandballTickerStream.KEY_ITEMS

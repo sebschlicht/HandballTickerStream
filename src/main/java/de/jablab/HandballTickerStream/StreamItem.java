@@ -142,30 +142,30 @@ public abstract class StreamItem extends Streamable {
 			throws StreamItemFormatException {
 		final JSONObject streamItem = parseJSONObject(jsonString);
 		if (streamItem != null) {
-			return parseJSON(streamItem);
+			return parseAnyJSON(streamItem);
 		} else {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
 	}
 
-	public static StreamItem parseJSON(final JSONObject streamItem)
+	public static StreamItem parseAnyJSON(final JSONObject itemObject)
 			throws StreamItemFormatException {
-		final StreamItemType type = parseStreamItemType(streamItem);
+		final StreamItemType type = parseStreamItemType(itemObject);
 
 		switch (type) {
 
 			case PHASE_END:
-				return PhaseEndItem.loadFromJSON(streamItem);
+				return PhaseEndItem.loadFromJSON(itemObject);
 
 			case TEXT:
-				return TextItem.loadFromJSON(streamItem);
+				return TextItem.loadFromJSON(itemObject);
 
 			case SCORE:
-				return ScoreItem.loadFromJSON(streamItem);
+				return ScoreItem.loadFromJSON(itemObject);
 
 			case FOUL:
-				return FoulItem.loadFromJSON(streamItem);
+				return FoulItem.loadFromJSON(itemObject);
 
 			default:
 				throw new IllegalArgumentException("stream item type \"" + type
@@ -174,19 +174,19 @@ public abstract class StreamItem extends Streamable {
 	}
 
 	protected static StreamItemInformation loadStreamItemInformation(
-			final JSONObject streamItem) throws StreamItemFormatException {
-		final Date published = parsePublished(streamItem);
-		final MatchTime time = parseTime(streamItem);
-		final StreamItemType type = parseStreamItemType(streamItem);
-		final JSONObject object = parseObject(streamItem);
-		final String message = parseMessage(streamItem);
+			final JSONObject itemObject) throws StreamItemFormatException {
+		final Date published = parsePublished(itemObject);
+		final MatchTime time = parseTime(itemObject);
+		final StreamItemType type = parseStreamItemType(itemObject);
+		final JSONObject object = parseObject(itemObject);
+		final String message = parseMessage(itemObject);
 
 		return new StreamItemInformation(published, time, type, object, message);
 	}
 
-	private static Date parsePublished(final JSONObject streamItem)
+	private static Date parsePublished(final JSONObject itemObject)
 			throws StreamItemFormatException {
-		final String sPublished = (String) streamItem
+		final String sPublished = (String) itemObject
 				.get(HandballTickerStream.StreamItem.KEY_PUBLISHED);
 		if (sPublished != null) {
 			try {
@@ -204,9 +204,9 @@ public abstract class StreamItem extends Streamable {
 		}
 	}
 
-	private static MatchTime parseTime(final JSONObject streamItem)
+	private static MatchTime parseTime(final JSONObject itemObject)
 			throws StreamItemFormatException {
-		final Object time = streamItem
+		final Object time = itemObject
 				.get(HandballTickerStream.StreamItem.KEY_TIME);
 		if (time != null) {
 			if (time instanceof JSONObject) {
@@ -231,8 +231,8 @@ public abstract class StreamItem extends Streamable {
 	}
 
 	private static StreamItemType parseStreamItemType(
-			final JSONObject streamItem) throws StreamItemFormatException {
-		final String sType = (String) streamItem
+			final JSONObject itemObject) throws StreamItemFormatException {
+		final String sType = (String) itemObject
 				.get(HandballTickerStream.StreamItem.KEY_TYPE);
 		if (sType != null) {
 			final StreamItemType type = StreamItemType.parseString(sType);
@@ -251,9 +251,9 @@ public abstract class StreamItem extends Streamable {
 		}
 	}
 
-	private static JSONObject parseObject(final JSONObject streamItem)
+	private static JSONObject parseObject(final JSONObject itemObject)
 			throws StreamItemFormatException {
-		final Object object = streamItem
+		final Object object = itemObject
 				.get(HandballTickerStream.StreamItem.KEY_OBJECT);
 		if (object != null) {
 			if (object instanceof JSONObject) {
@@ -271,8 +271,8 @@ public abstract class StreamItem extends Streamable {
 		}
 	}
 
-	private static String parseMessage(final JSONObject streamItem) {
-		return (String) streamItem
+	private static String parseMessage(final JSONObject itemObject) {
+		return (String) itemObject
 				.get(HandballTickerStream.StreamItem.KEY_MESSAGE);
 	}
 
