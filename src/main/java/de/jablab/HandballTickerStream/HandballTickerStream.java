@@ -8,6 +8,13 @@ package de.jablab.HandballTickerStream;
  */
 public class HandballTickerStream {
 
+	public static final String KEY_TIME = "time";
+	public static final String KEY_HOME = "home";
+	public static final String KEY_GUEST = "guest";
+	public static final String KEY_FIRST = "first";
+	public static final String KEY_SECOND = "second";
+	public static final String KEY_ITEMS = "items";
+
 	public class MatchTime {
 
 		public static final String KEY_MINUTE = "minute";

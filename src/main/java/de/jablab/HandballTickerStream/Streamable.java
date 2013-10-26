@@ -17,6 +17,22 @@ public abstract class Streamable {
 	protected static final JSONParser JSON_PARSER = new JSONParser();
 
 	/**
+	 * parse a JSON String to a JSON object
+	 * 
+	 * @param jsonString
+	 *            JSON String to be parsed
+	 * @return JSON object represented by the String passed<br>
+	 *         <b>null</b> if the String passed is not a valid JSON String
+	 */
+	protected static JSONObject parseJSONObject(final String jsonString) {
+		try {
+			return (JSONObject) JSON_PARSER.parse(jsonString);
+		} catch (final org.json.simple.parser.ParseException e) {
+			return null;
+		}
+	}
+
+	/**
 	 * @return JSON object
 	 */
 	public abstract JSONObject toJSON();
@@ -24,6 +40,8 @@ public abstract class Streamable {
 	/**
 	 * @return JSON String representing the object
 	 */
-	public abstract String toJSONString();
+	public String toJSONString() {
+		return this.toJSON().toJSONString();
+	}
 
 }

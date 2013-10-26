@@ -11,7 +11,6 @@ import de.jablab.HandballTickerStream.Player;
 import de.jablab.HandballTickerStream.exceptions.PlayerFormatException;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
 import de.jablab.HandballTickerStream.exceptions.items.InjuryPhaseEndItemFormatException;
-import de.jablab.HandballTickerStream.exceptions.items.PhaseEndItemFormatException;
 
 /**
  * match phase end due to an injury stream item
@@ -65,75 +64,53 @@ public class InjuryPhaseEndItem extends PhaseEndItem {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected JSONObject getPhaseEndObjectJSON() {
-		final JSONObject object = super.getPhaseEndObjectJSON();
+		final JSONObject object = new JSONObject();
 		object.put(HandballTickerStream.StreamItem.PhaseEnd.Injury.KEY_PLAYER,
 				this.player.toJSON());
 		return object;
 	}
 
-	/**
-	 * load an injury phase end stream item from JSON
-	 * 
-	 * @param jsonString
-	 *            injury phase end stream item JSON
-	 * @throws InjuryPhaseEndItemFormatException
-	 *             if the JSON is not a valid injury phase end stream item
-	 *             object
-	 * @throws PhaseEndItemFormatException
-	 *             if the JSON is not a valid phase end stream item object
-	 * @throws StreamItemFormatException
-	 *             if the JSON is not a valid stream item object
-	 */
 	public static InjuryPhaseEndItem parseJSON(final String jsonString)
 			throws StreamItemFormatException {
-		JSONObject injuryPhaseEndStreamItem;
-		try {
-			injuryPhaseEndStreamItem = (JSONObject) JSON_PARSER
-					.parse(jsonString);
-		} catch (final org.json.simple.parser.ParseException e) {
+		final JSONObject injuryItem = parseJSONObject(jsonString);
+		if (injuryItem != null) {
+			return loadFromJSON(injuryItem);
+		} else {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
+	}
 
-		final PhaseEndItemInformation phaseEndItemInformation = PhaseEndItem
-				.parsePhaseEndItemJSON(injuryPhaseEndStreamItem);
-		final JSONObject object = phaseEndItemInformation.getObject();
+	public static InjuryPhaseEndItem loadFromJSON(final JSONObject streamItem)
+			throws StreamItemFormatException {
+		final PhaseEndItemInformation phaseEndItemInfo = loadPhaseEndItemInformation(streamItem);
 
-		if (phaseEndItemInformation.getSubType() == PhaseEndSubType.INJURY) {
-			final Player player = parsePlayer(object);
+		if (phaseEndItemInfo.getSubType() == PhaseEndSubType.INJURY) {
+			final JSONObject injuryObject = phaseEndItemInfo
+					.getSubObject();
 
-			return new InjuryPhaseEndItem(
-					phaseEndItemInformation.getPublished(),
-					phaseEndItemInformation.getTime(),
-					phaseEndItemInformation.getMessage(),
-					phaseEndItemInformation.getBefore(),
-					phaseEndItemInformation.getAfter(), player);
+			final Player player = parsePlayer(injuryObject);
+
+			return new InjuryPhaseEndItem(phaseEndItemInfo.getPublished(),
+					phaseEndItemInfo.getTime(), phaseEndItemInfo.getMessage(),
+					phaseEndItemInfo.getBefore(), phaseEndItemInfo.getAfter(),
+					player);
 		} else {
 			throw new InjuryPhaseEndItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.PhaseEnd.KEY_SUB_TYPE
 					+ "\" is invalid: must be \"" + PhaseEndSubType.INJURY
-					+ "\" but was \"" + phaseEndItemInformation.getSubType()
-					+ "\"");
+					+ "\" but was \"" + phaseEndItemInfo.getSubType() + "\"");
 		}
 	}
 
-	/**
-	 * parse the player field
-	 * 
-	 * @param object
-	 *            injury phase end stream item object JSON object
-	 * @return player that was injured
-	 * @throws InjuryPhaseEndItemFormatException
-	 *             if field missing, malformed or not a player object
-	 */
-	private static Player parsePlayer(final JSONObject object)
+	private static Player parsePlayer(final JSONObject injuryObject)
 			throws InjuryPhaseEndItemFormatException {
-		final Object player = object
+		final Object player = injuryObject
 				.get(HandballTickerStream.StreamItem.PhaseEnd.Injury.KEY_PLAYER);
 		if (player != null) {
 			if (player instanceof JSONObject) {
 				try {
-					return Player.parseJSON((JSONObject) player);
+					return Player.loadFromJSON((JSONObject) player);
 				} catch (final PlayerFormatException e) {
 					throw new InjuryPhaseEndItemFormatException(
 							"field \""

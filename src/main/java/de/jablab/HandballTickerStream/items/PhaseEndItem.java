@@ -66,7 +66,7 @@ public class PhaseEndItem extends StreamItem {
 		return this.before;
 	}
 
-	public void setBefore(MatchPhase before) {
+	public void setBefore(final MatchPhase before) {
 		this.before = before;
 	}
 
@@ -77,7 +77,7 @@ public class PhaseEndItem extends StreamItem {
 		return this.after;
 	}
 
-	public void setAfter(MatchPhase after) {
+	public void setAfter(final MatchPhase after) {
 		this.after = after;
 	}
 
@@ -88,7 +88,7 @@ public class PhaseEndItem extends StreamItem {
 		return this.subType;
 	}
 
-	public void setSubType(PhaseEndSubType subType) {
+	public void setSubType(final PhaseEndSubType subType) {
 		this.subType = subType;
 	}
 
@@ -110,96 +110,69 @@ public class PhaseEndItem extends StreamItem {
 	}
 
 	protected JSONObject getPhaseEndObjectJSON() {
-		return new JSONObject();
+		// basic phase end item does not contain an object
+		return null;
 	}
 
-	/**
-	 * load any phase end stream item from JSON
-	 * 
-	 * @param jsonString
-	 *            phase end stream item JSON
-	 * @throws PhaseEndItemFormatException
-	 *             if the JSON is not a valid phase end stream item object
-	 * @throws StreamItemFormatException
-	 *             if the JSON is not a valid stream item object
-	 */
 	public static PhaseEndItem parseJSON(final String jsonString)
 			throws StreamItemFormatException {
-		JSONObject phaseEndStreamItem;
-		try {
-			phaseEndStreamItem = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (final org.json.simple.parser.ParseException e) {
+		final JSONObject phaseEndItem = parseJSONObject(jsonString);
+		if (phaseEndItem != null) {
+			return loadFromJSON(phaseEndItem);
+		} else {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
-
-		final StreamItemInformation streamItemInformation = StreamItem
-				.parseStreamItemJSON(phaseEndStreamItem);
-		final JSONObject object = streamItemInformation.getObject();
-
-		if (streamItemInformation.getType() == StreamItemType.PHASE_END) {
-			final PhaseEndSubType subType = parseSubType(object);
-
-			if (subType == null) {
-				final MatchPhase before = parseBefore(object);
-				final MatchPhase after = parseAfter(object);
-				// TODO: check if combination allowed?
-
-				return new PhaseEndItem(streamItemInformation.getPublished(),
-						streamItemInformation.getTime(),
-						streamItemInformation.getMessage(), before, after);
-			} else {
-				switch (subType) {
-				// TODO: call sub type specific parsing methods
-
-					case TIMEOUT:
-						return TimeoutPhaseEndItem.parseJSON(jsonString);
-
-					default:
-						throw new IllegalArgumentException(
-								"phase end stream item sub type \"" + subType
-										+ "\" not implemented!");
-				}
-			}
-		} else {
-			throw new PhaseEndItemFormatException("field \""
-					+ HandballTickerStream.StreamItem.KEY_TYPE
-					+ "\" is invalid: must be \"" + StreamItemType.PHASE_END
-					+ "\"");
-		}
 	}
 
-	/**
-	 * load the basic phase end stream item from JSON object
-	 * 
-	 * @param phaseEndStreamItem
-	 *            phase end stream item JSON object
-	 * @throws PhaseEndItemFormatException
-	 *             if the JSON object is not a valid phase end stream item
-	 *             object
-	 * @throws StreamItemFormatException
-	 *             if the JSON object is not a valid stream item object
-	 */
-	protected static PhaseEndItemInformation parsePhaseEndItemJSON(
-			final JSONObject phaseEndStreamItem)
+	public static PhaseEndItem loadFromJSON(final JSONObject streamItem)
 			throws StreamItemFormatException {
-		final StreamItemInformation streamItemInformation = StreamItem
-				.parseStreamItemJSON(phaseEndStreamItem);
-		if (streamItemInformation.getType() == StreamItemType.PHASE_END) {
-			final JSONObject streamItemObject = streamItemInformation
-					.getObject();
+		final PhaseEndItemInformation phaseEndItemInfo = loadPhaseEndItemInformation(streamItem);
 
-			final MatchPhase before = parseBefore(streamItemObject);
-			final MatchPhase after = parseAfter(streamItemObject);
+		if (phaseEndItemInfo.getSubType() == null) {
+			return new PhaseEndItem(phaseEndItemInfo.getPublished(),
+					phaseEndItemInfo.getTime(), phaseEndItemInfo.getMessage(),
+					phaseEndItemInfo.getBefore(), phaseEndItemInfo.getAfter());
+		} else {
+			switch (phaseEndItemInfo.getSubType()) {
+
+				case TIMEOUT:
+					return TimeoutPhaseEndItem.loadFromJSON(streamItem);
+
+				case INJURY:
+					return InjuryPhaseEndItem.loadFromJSON(streamItem);
+
+				default:
+					throw new IllegalArgumentException(
+							"phase end stream item sub type \""
+									+ phaseEndItemInfo.getSubType()
+									+ "\" not implemented!");
+			}
+		}
+	}
+
+	protected static PhaseEndItemInformation loadPhaseEndItemInformation(
+			final JSONObject streamItem) throws StreamItemFormatException {
+		final StreamItemInformation streamInfo = loadStreamItemInformation(streamItem);
+
+		if (streamInfo.getType() == StreamItemType.PHASE_END) {
+			final JSONObject phaseEndObject = streamInfo.getObject();
+
+			final MatchPhase before = parseBefore(phaseEndObject);
+			final MatchPhase after = parseAfter(phaseEndObject);
 			// TODO: check if combination allowed?
+			final PhaseEndSubType subType = parseSubType(phaseEndObject);
+			final JSONObject subObject = parseObject(phaseEndObject);
 
-			final PhaseEndSubType subType = parseSubType(streamItemObject);
-			final JSONObject object = parseObject(streamItemObject);
-			return new PhaseEndItemInformation(
-					streamItemInformation.getPublished(),
-					streamItemInformation.getTime(),
-					streamItemInformation.getMessage(), before, after, subType,
-					object);
+			// check if object is provided if needed
+			if ((subType != null) && (subObject == null)) {
+				throw new PhaseEndItemFormatException("field \""
+						+ HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT
+						+ "\" is missing");
+			}
+
+			return new PhaseEndItemInformation(streamInfo, before, after,
+					subType, subObject);
 		} else {
 			throw new PhaseEndItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.KEY_TYPE
@@ -208,18 +181,9 @@ public class PhaseEndItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the before field
-	 * 
-	 * @param object
-	 *            phase end stream item object JSON object
-	 * @return phase that ended
-	 * @throws PhaseEndItemFormatException
-	 *             if field missing or malformed
-	 */
-	private static MatchPhase parseBefore(final JSONObject object)
+	private static MatchPhase parseBefore(final JSONObject phaseEndObject)
 			throws PhaseEndItemFormatException {
-		final String sBefore = (String) object
+		final String sBefore = (String) phaseEndObject
 				.get(HandballTickerStream.StreamItem.PhaseEnd.KEY_BEFORE);
 		if (sBefore != null) {
 			final MatchPhase before = MatchPhase.parseString(sBefore);
@@ -238,18 +202,9 @@ public class PhaseEndItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the after field
-	 * 
-	 * @param object
-	 *            phase end stream item object JSON object
-	 * @return new phase that began
-	 * @throws PhaseEndItemFormatException
-	 *             if field missing or malformed
-	 */
-	private static MatchPhase parseAfter(final JSONObject object)
+	private static MatchPhase parseAfter(final JSONObject phaseEndObject)
 			throws PhaseEndItemFormatException {
-		final String sAfter = (String) object
+		final String sAfter = (String) phaseEndObject
 				.get(HandballTickerStream.StreamItem.PhaseEnd.KEY_AFTER);
 		if (sAfter != null) {
 			final MatchPhase after = MatchPhase.parseString(sAfter);
@@ -268,19 +223,9 @@ public class PhaseEndItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the sub type field
-	 * 
-	 * @param object
-	 *            phase end stream item object JSON object
-	 * @return sub type of the phase end item<br>
-	 *         <b>null</b> if field missing
-	 * @throws PhaseEndItemFormatException
-	 *             if field malformed
-	 */
-	private static PhaseEndSubType parseSubType(final JSONObject object)
+	private static PhaseEndSubType parseSubType(final JSONObject phaseEndObject)
 			throws PhaseEndItemFormatException {
-		final String sSubType = (String) object
+		final String sSubType = (String) phaseEndObject
 				.get(HandballTickerStream.StreamItem.PhaseEnd.KEY_SUB_TYPE);
 		if (sSubType != null) {
 			final PhaseEndSubType subType = PhaseEndSubType
@@ -298,18 +243,9 @@ public class PhaseEndItem extends StreamItem {
 		return null;
 	}
 
-	/**
-	 * parse the object field
-	 * 
-	 * @param object
-	 *            phase end stream item object JSON object
-	 * @return <SubType>PhaseEndItem JSON object
-	 * @throws PhaseEndItemFormatException
-	 *             if field missing or malformed
-	 */
-	private static JSONObject parseObject(final JSONObject phaseEndItem)
+	private static JSONObject parseObject(final JSONObject phaseEndObject)
 			throws PhaseEndItemFormatException {
-		final Object object = phaseEndItem
+		final Object object = phaseEndObject
 				.get(HandballTickerStream.StreamItem.PhaseEnd.KEY_OBJECT);
 		if (object != null) {
 			if (object instanceof JSONObject) {

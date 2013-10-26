@@ -33,7 +33,7 @@ public class ScoreTest extends StreamableTest {
 
 	private void loadScore(final boolean error) {
 		try {
-			this.score = Score.parseJSON(this.sourceObject);
+			this.score = Score.loadFromJSON(this.sourceObject);
 		} catch (final ScoreFormatException e) {
 			this.setErrTrace(e.getMessage());
 		}

@@ -9,7 +9,6 @@ import de.jablab.HandballTickerStream.MatchPhase;
 import de.jablab.HandballTickerStream.MatchTime;
 import de.jablab.HandballTickerStream.TeamRole;
 import de.jablab.HandballTickerStream.exceptions.StreamItemFormatException;
-import de.jablab.HandballTickerStream.exceptions.items.PhaseEndItemFormatException;
 import de.jablab.HandballTickerStream.exceptions.items.TimeoutPhaseEndItemFormatException;
 
 /**
@@ -64,71 +63,49 @@ public class TimeoutPhaseEndItem extends PhaseEndItem {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected JSONObject getPhaseEndObjectJSON() {
-		final JSONObject object = super.getPhaseEndObjectJSON();
+		final JSONObject object = new JSONObject();
 		object.put(
 				HandballTickerStream.StreamItem.PhaseEnd.Timeout.KEY_TEAM_ROLE,
 				this.team.toString());
 		return object;
 	}
 
-	/**
-	 * load a timeout phase end stream item from JSON
-	 * 
-	 * @param jsonString
-	 *            timeout phase end stream item JSON
-	 * @throws TimeoutPhaseEndItemFormatException
-	 *             if the JSON is not a valid timeout phase end stream item
-	 *             object
-	 * @throws PhaseEndItemFormatException
-	 *             if the JSON is not a valid phase end stream item object
-	 * @throws StreamItemFormatException
-	 *             if the JSON is not a valid stream item object
-	 */
 	public static TimeoutPhaseEndItem parseJSON(final String jsonString)
 			throws StreamItemFormatException {
-		JSONObject timeoutPhaseEndStreamItem;
-		try {
-			timeoutPhaseEndStreamItem = (JSONObject) JSON_PARSER
-					.parse(jsonString);
-		} catch (final org.json.simple.parser.ParseException e) {
+		final JSONObject timeoutItem = parseJSONObject(jsonString);
+		if (timeoutItem != null) {
+			return loadFromJSON(timeoutItem);
+		} else {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
+	}
 
-		final PhaseEndItemInformation phaseEndItemInformation = PhaseEndItem
-				.parsePhaseEndItemJSON(timeoutPhaseEndStreamItem);
-		final JSONObject object = phaseEndItemInformation.getObject();
+	public static TimeoutPhaseEndItem loadFromJSON(final JSONObject streamItem)
+			throws StreamItemFormatException {
+		final PhaseEndItemInformation phaseEndItemInfo = loadPhaseEndItemInformation(streamItem);
 
-		if (phaseEndItemInformation.getSubType() == PhaseEndSubType.TIMEOUT) {
-			final TeamRole team = parseTeamRole(object);
+		if (phaseEndItemInfo.getSubType() == PhaseEndSubType.TIMEOUT) {
+			final JSONObject timeoutObject = phaseEndItemInfo
+					.getSubObject();
 
-			return new TimeoutPhaseEndItem(
-					phaseEndItemInformation.getPublished(),
-					phaseEndItemInformation.getTime(),
-					phaseEndItemInformation.getMessage(),
-					phaseEndItemInformation.getBefore(),
-					phaseEndItemInformation.getAfter(), team);
+			final TeamRole team = parseTeamRole(timeoutObject);
+
+			return new TimeoutPhaseEndItem(phaseEndItemInfo.getPublished(),
+					phaseEndItemInfo.getTime(), phaseEndItemInfo.getMessage(),
+					phaseEndItemInfo.getBefore(), phaseEndItemInfo.getAfter(),
+					team);
 		} else {
 			throw new TimeoutPhaseEndItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.PhaseEnd.KEY_SUB_TYPE
 					+ "\" is invalid: must be \"" + PhaseEndSubType.TIMEOUT
-					+ "\" but was \"" + phaseEndItemInformation.getSubType()
-					+ "\"");
+					+ "\" but was \"" + phaseEndItemInfo.getSubType() + "\"");
 		}
 	}
 
-	/**
-	 * parse the team field
-	 * 
-	 * @param object
-	 *            timeout phase end stream item object JSON object
-	 * @return role of the team that used its timeout
-	 * @throws TimeoutPhaseEndItemFormatException
-	 *             if field missing or malformed
-	 */
-	private static TeamRole parseTeamRole(final JSONObject object)
+	private static TeamRole parseTeamRole(final JSONObject timeoutObject)
 			throws TimeoutPhaseEndItemFormatException {
-		final String sTeamRole = (String) object
+		final String sTeamRole = (String) timeoutObject
 				.get(HandballTickerStream.StreamItem.PhaseEnd.Timeout.KEY_TEAM_ROLE);
 		if (sTeamRole != null) {
 			final TeamRole team = TeamRole.parseString(sTeamRole);

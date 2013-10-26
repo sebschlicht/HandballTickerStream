@@ -69,11 +69,6 @@ public class Score extends Streamable {
 	}
 
 	@Override
-	public String toJSONString() {
-		return this.toJSON().toJSONString();
-	}
-
-	@Override
 	public boolean equals(final Object o) {
 		if (o == null) {
 			return false;
@@ -89,54 +84,27 @@ public class Score extends Streamable {
 		return ((score.getHome() == this.home) && (score.getGuest() == this.guest));
 	}
 
-	/**
-	 * load score from JSON
-	 * 
-	 * @param score
-	 *            score JSON
-	 * @throws ScoreFormatException
-	 *             if the JSON is not a valid score object
-	 */
 	public static Score parseJSON(final String jsonString)
 			throws ScoreFormatException {
-		JSONObject score;
-		try {
-			score = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		final JSONObject scoreObject = parseJSONObject(jsonString);
+		if (scoreObject != null) {
+			return loadFromJSON(scoreObject);
+		} else {
 			throw new ScoreFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
-
-		return parseJSON(score);
 	}
 
-	/**
-	 * load score from JSON object
-	 * 
-	 * @param score
-	 *            score JSON object
-	 * @throws ScoreFormatException
-	 *             if the JSON object is not a valid score object
-	 */
-	public static Score parseJSON(final JSONObject score)
+	public static Score loadFromJSON(final JSONObject scoreObject)
 			throws ScoreFormatException {
-		final int home = parseHome(score);
-		final int guest = parseGuest(score);
+		final int home = parseHome(scoreObject);
+		final int guest = parseGuest(scoreObject);
 		return new Score(home, guest);
 	}
 
-	/**
-	 * parse the home field
-	 * 
-	 * @param score
-	 *            score JSON object
-	 * @return score of the home team
-	 * @throws ScoreFormatException
-	 *             if field missing or malformed
-	 */
-	private static int parseHome(final JSONObject score)
+	private static int parseHome(final JSONObject scoreObject)
 			throws ScoreFormatException {
-		final String sHome = (String) score
+		final String sHome = (String) scoreObject
 				.get(HandballTickerStream.Score.KEY_HOME);
 		if (sHome != null) {
 			try {
@@ -152,18 +120,9 @@ public class Score extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the guest field
-	 * 
-	 * @param score
-	 *            score JSON object
-	 * @return score of the guest team
-	 * @throws ScoreFormatException
-	 *             if field missing or malformed
-	 */
-	private static int parseGuest(final JSONObject score)
+	private static int parseGuest(final JSONObject scoreObject)
 			throws ScoreFormatException {
-		final String sGuest = (String) score
+		final String sGuest = (String) scoreObject
 				.get(HandballTickerStream.Score.KEY_GUEST);
 		if (sGuest != null) {
 			try {

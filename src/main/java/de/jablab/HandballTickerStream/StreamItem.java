@@ -138,43 +138,34 @@ public abstract class StreamItem extends Streamable {
 		return object;
 	}
 
-	@Override
-	public String toJSONString() {
-		return this.toJSON().toJSONString();
-	}
-
-	/**
-	 * load any stream item from JSON
-	 * 
-	 * @param jsonString
-	 *            stream item JSON
-	 * @throws StreamItemFormatException
-	 *             if the JSON is not a valid stream item object
-	 */
 	public static StreamItem parseJSON(final String jsonString)
 			throws StreamItemFormatException {
-		JSONObject streamItem;
-		try {
-			streamItem = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (final org.json.simple.parser.ParseException e) {
+		final JSONObject streamItem = parseJSONObject(jsonString);
+		if (streamItem != null) {
+			return parseJSON(streamItem);
+		} else {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
+	}
 
+	public static StreamItem parseJSON(final JSONObject streamItem)
+			throws StreamItemFormatException {
 		final StreamItemType type = parseStreamItemType(streamItem);
 
 		switch (type) {
+
 			case PHASE_END:
-				return PhaseEndItem.parseJSON(jsonString);
+				return PhaseEndItem.loadFromJSON(streamItem);
 
 			case TEXT:
-				return TextItem.parseJSON(jsonString);
+				return TextItem.loadFromJSON(streamItem);
 
 			case SCORE:
-				return ScoreItem.parseJSON(jsonString);
+				return ScoreItem.loadFromJSON(streamItem);
 
 			case FOUL:
-				return FoulItem.parseJSON(jsonString);
+				return FoulItem.loadFromJSON(streamItem);
 
 			default:
 				throw new IllegalArgumentException("stream item type \"" + type
@@ -182,15 +173,7 @@ public abstract class StreamItem extends Streamable {
 		}
 	}
 
-	/**
-	 * load the basic stream item from JSON object
-	 * 
-	 * @param streamItem
-	 *            stream item JSON object
-	 * @throws StreamItemFormatException
-	 *             if the JSON object is not a valid stream item object
-	 */
-	protected static StreamItemInformation parseStreamItemJSON(
+	protected static StreamItemInformation loadStreamItemInformation(
 			final JSONObject streamItem) throws StreamItemFormatException {
 		final Date published = parsePublished(streamItem);
 		final MatchTime time = parseTime(streamItem);
@@ -201,15 +184,6 @@ public abstract class StreamItem extends Streamable {
 		return new StreamItemInformation(published, time, type, object, message);
 	}
 
-	/**
-	 * parse the published field
-	 * 
-	 * @param streamItem
-	 *            stream item JSON object
-	 * @return exact time when published
-	 * @throws StreamItemFormatException
-	 *             if field missing or malformed
-	 */
 	private static Date parsePublished(final JSONObject streamItem)
 			throws StreamItemFormatException {
 		final String sPublished = (String) streamItem
@@ -230,15 +204,6 @@ public abstract class StreamItem extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the time field
-	 * 
-	 * @param streamItem
-	 *            stream item JSON object
-	 * @return match time when published
-	 * @throws StreamItemFormatException
-	 *             if field missing, malformed or not a match time object
-	 */
 	private static MatchTime parseTime(final JSONObject streamItem)
 			throws StreamItemFormatException {
 		final Object time = streamItem
@@ -246,7 +211,7 @@ public abstract class StreamItem extends Streamable {
 		if (time != null) {
 			if (time instanceof JSONObject) {
 				try {
-					return MatchTime.parseJSON((JSONObject) time);
+					return MatchTime.loadFromJSON((JSONObject) time);
 				} catch (final MatchTimeFormatException e) {
 					throw new StreamItemFormatException("field \""
 							+ HandballTickerStream.StreamItem.KEY_TIME
@@ -265,15 +230,6 @@ public abstract class StreamItem extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the type field
-	 * 
-	 * @param streamItem
-	 *            stream item JSON object
-	 * @return type of the item
-	 * @throws StreamItemFormatException
-	 *             if field missing or malformed
-	 */
 	private static StreamItemType parseStreamItemType(
 			final JSONObject streamItem) throws StreamItemFormatException {
 		final String sType = (String) streamItem
@@ -295,15 +251,6 @@ public abstract class StreamItem extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the object field
-	 * 
-	 * @param streamItem
-	 *            stream item JSON object
-	 * @return <Type>Item JSON object
-	 * @throws StreamItemFormatException
-	 *             if field missing or malformed
-	 */
 	private static JSONObject parseObject(final JSONObject streamItem)
 			throws StreamItemFormatException {
 		final Object object = streamItem
@@ -324,14 +271,6 @@ public abstract class StreamItem extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the message field
-	 * 
-	 * @param streamItem
-	 *            stream item JSON object
-	 * @return message displayed instead of a generated value<br>
-	 *         <b>null</b> if field missing
-	 */
 	private static String parseMessage(final JSONObject streamItem) {
 		return (String) streamItem
 				.get(HandballTickerStream.StreamItem.KEY_MESSAGE);

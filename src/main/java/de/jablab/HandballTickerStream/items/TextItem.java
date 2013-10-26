@@ -60,36 +60,29 @@ public class TextItem extends StreamItem {
 		return object;
 	}
 
-	/**
-	 * load a text stream item from JSON
-	 * 
-	 * @param jsonString
-	 *            text stream item JSON
-	 * @throws TextItemFormatException
-	 *             if the JSON is not a valid text stream item object
-	 * @throws StreamItemFormatException
-	 *             if the JSON is not a valid stream item object
-	 */
 	public static TextItem parseJSON(final String jsonString)
 			throws StreamItemFormatException {
-		JSONObject textStreamItem;
-		try {
-			textStreamItem = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		final JSONObject textItem = parseJSONObject(jsonString);
+		if (textItem != null) {
+			return loadFromJSON(textItem);
+		} else {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
+	}
 
-		final StreamItemInformation streamItemInformation = StreamItem
-				.parseStreamItemJSON(textStreamItem);
-		final JSONObject object = streamItemInformation.getObject();
+	public static TextItem loadFromJSON(final JSONObject streamItem)
+			throws StreamItemFormatException {
+		final StreamItemInformation streamItemInfo = loadStreamItemInformation(streamItem);
 
-		if (streamItemInformation.getType() == StreamItemType.TEXT) {
-			final String textItemMessage = parseTextItemMessage(object);
+		if (streamItemInfo.getType() == StreamItemType.TEXT) {
+			final JSONObject textObject = streamItemInfo.getObject();
 
-			return new TextItem(streamItemInformation.getPublished(),
-					streamItemInformation.getTime(),
-					streamItemInformation.getMessage(), textItemMessage);
+			final String textItemMessage = parseTextItemMessage(textObject);
+
+			return new TextItem(streamItemInfo.getPublished(),
+					streamItemInfo.getTime(), streamItemInfo.getMessage(),
+					textItemMessage);
 		} else {
 			throw new TextItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.KEY_TYPE
@@ -97,18 +90,9 @@ public class TextItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the message field
-	 * 
-	 * @param object
-	 *            text stream item object JSON object
-	 * @return message displayed
-	 * @throws TextItemFormatException
-	 *             if field missing
-	 */
-	protected static String parseTextItemMessage(final JSONObject object)
+	private static String parseTextItemMessage(final JSONObject textObject)
 			throws TextItemFormatException {
-		final String message = (String) object
+		final String message = (String) textObject
 				.get(HandballTickerStream.StreamItem.Text.KEY_MESSAGE);
 		if (message != null) {
 			return message;

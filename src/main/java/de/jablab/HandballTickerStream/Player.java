@@ -115,11 +115,6 @@ public class Player extends Streamable {
 	}
 
 	@Override
-	public String toJSONString() {
-		return this.toJSON().toJSONString();
-	}
-
-	@Override
 	public boolean equals(final Object o) {
 		if (o == null) {
 			return false;
@@ -149,57 +144,29 @@ public class Player extends Streamable {
 						this.name)) && (player.getTeam() == this.team));
 	}
 
-	/**
-	 * load player from JSON
-	 * 
-	 * @param player
-	 *            player JSON
-	 * @throws PlayerFormatException
-	 *             if the JSON is not a valid player object
-	 */
 	public static Player parseJSON(final String jsonString)
 			throws PlayerFormatException {
-		JSONObject player;
-		try {
-			player = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		final JSONObject playerObject = parseJSONObject(jsonString);
+		if (playerObject != null) {
+			return loadFromJSON(playerObject);
+		} else {
 			throw new PlayerFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
-
-		return parseJSON(player);
 	}
 
-	/**
-	 * load player from JSON object
-	 * 
-	 * @param player
-	 *            player JSON object
-	 * @throws PlayerFormatException
-	 *             if the JSON object is not a valid player object
-	 */
-	public static Player parseJSON(final JSONObject player)
+	public static Player loadFromJSON(final JSONObject playerObject)
 			throws PlayerFormatException {
-		final Integer identifier = parseIdentifier(player);
-		final int number = parseNumber(player);
-		final String name = parseName(player);
-		final TeamRole team = parseTeamRole(player);
+		final Integer identifier = parseIdentifier(playerObject);
+		final int number = parseNumber(playerObject);
+		final String name = parseName(playerObject);
+		final TeamRole team = parseTeamRole(playerObject);
 		return new Player(identifier, number, name, team);
 	}
 
-	/**
-	 * parse the id field
-	 * 
-	 * @param player
-	 *            player JSON object
-	 * @return unique player identifier within the internal system<br>
-	 *         <b>null</b> if field missing
-	 * @throws PlayerFormatException
-	 *             if field malformed
-	 */
-	private static Integer parseIdentifier(final JSONObject player)
+	private static Integer parseIdentifier(final JSONObject playerObject)
 			throws PlayerFormatException {
-		final String sId = (String) player
+		final String sId = (String) playerObject
 				.get(HandballTickerStream.Player.KEY_IDENTIFIER);
 		if (sId != null) {
 			try {
@@ -214,18 +181,9 @@ public class Player extends Streamable {
 		return null;
 	}
 
-	/**
-	 * parse the number field
-	 * 
-	 * @param player
-	 *            player JSON object
-	 * @return player number used in the match
-	 * @throws PlayerFormatException
-	 *             if field missing or malformed
-	 */
-	private static int parseNumber(final JSONObject player)
+	private static int parseNumber(final JSONObject playerObject)
 			throws PlayerFormatException {
-		final String sNumber = (String) player
+		final String sNumber = (String) playerObject
 				.get(HandballTickerStream.Player.KEY_NUMBER);
 		if (sNumber != null) {
 			try {
@@ -242,30 +200,13 @@ public class Player extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the name field
-	 * 
-	 * @param player
-	 *            player JSON object
-	 * @return real name<br>
-	 *         <b>null</b> if field missing
-	 */
-	private static String parseName(final JSONObject player) {
-		return (String) player.get(HandballTickerStream.Player.KEY_NAME);
+	private static String parseName(final JSONObject playerObject) {
+		return (String) playerObject.get(HandballTickerStream.Player.KEY_NAME);
 	}
 
-	/**
-	 * parse the team field
-	 * 
-	 * @param player
-	 *            player JSON object
-	 * @return role of the team the player is playing for
-	 * @throws PlayerFormatException
-	 *             if field missing or malformed
-	 */
-	private static TeamRole parseTeamRole(final JSONObject player)
+	private static TeamRole parseTeamRole(final JSONObject playerObject)
 			throws PlayerFormatException {
-		final String sTeamRole = (String) player
+		final String sTeamRole = (String) playerObject
 				.get(HandballTickerStream.Player.KEY_TEAM_ROLE);
 		if (sTeamRole != null) {
 			final TeamRole team = TeamRole.parseString(sTeamRole);

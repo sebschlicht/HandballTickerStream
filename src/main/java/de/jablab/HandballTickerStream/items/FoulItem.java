@@ -111,8 +111,7 @@ public class FoulItem extends StreamItem {
 			for (Discipline discipline : this.disciplines) {
 				disciplines.add(discipline.toString());
 			}
-			object.put(
-					HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES,
+			object.put(HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES,
 					disciplines);
 		}
 		if (this.victim != null) {
@@ -122,39 +121,30 @@ public class FoulItem extends StreamItem {
 		return object;
 	}
 
-	/**
-	 * load a foul stream item from JSON
-	 * 
-	 * @param jsonString
-	 *            foul stream item JSON
-	 * @throws FoulItemFormatException
-	 *             if the JSON is not a valid foul stream item object
-	 * @throws StreamItemFormatException
-	 *             if the JSON is not a valid stream item object
-	 */
 	public static FoulItem parseJSON(final String jsonString)
 			throws StreamItemFormatException {
-		JSONObject foulStreamItem;
-		try {
-			foulStreamItem = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		final JSONObject foulItem = parseJSONObject(jsonString);
+		if (foulItem != null) {
+			return loadFromJSON(foulItem);
+		} else {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
+	}
 
-		final StreamItemInformation streamItemInformation = StreamItem
-				.parseStreamItemJSON(foulStreamItem);
-		final JSONObject object = streamItemInformation.getObject();
+	public static FoulItem loadFromJSON(final JSONObject streamItem)
+			throws StreamItemFormatException {
+		final StreamItemInformation streamItemInfo = loadStreamItemInformation(streamItem);
+		final JSONObject foulObject = streamItemInfo.getObject();
 
-		if (streamItemInformation.getType() == StreamItemType.FOUL) {
-			final Player player = parsePlayer(object);
-			final List<Discipline> disciplines = parseDisciplines(object);
-			final Player victim = parseVictim(object);
+		if (streamItemInfo.getType() == StreamItemType.FOUL) {
+			final Player player = parsePlayer(foulObject);
+			final List<Discipline> disciplines = parseDisciplines(foulObject);
+			final Player victim = parseVictim(foulObject);
 
-			return new FoulItem(streamItemInformation.getPublished(),
-					streamItemInformation.getTime(),
-					streamItemInformation.getMessage(), player, disciplines,
-					victim);
+			return new FoulItem(streamItemInfo.getPublished(),
+					streamItemInfo.getTime(), streamItemInfo.getMessage(),
+					player, disciplines, victim);
 		} else {
 			throw new ScoreItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.KEY_TYPE
@@ -162,28 +152,18 @@ public class FoulItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the player field
-	 * 
-	 * @param object
-	 *            foul stream item object JSON object
-	 * @return player who fouled
-	 * @throws FoulItemFormatException
-	 *             if field missing, malformed or not a player object
-	 */
-	private static Player parsePlayer(final JSONObject object)
+	private static Player parsePlayer(final JSONObject foulObject)
 			throws FoulItemFormatException {
-		final Object player = object
+		final Object player = foulObject
 				.get(HandballTickerStream.StreamItem.Foul.KEY_PLAYER);
 		if (player != null) {
 			if (player instanceof JSONObject) {
 				try {
-					return Player.parseJSON((JSONObject) player);
+					return Player.loadFromJSON((JSONObject) player);
 				} catch (final PlayerFormatException e) {
-					throw new FoulItemFormatException(
-							"field \""
-									+ HandballTickerStream.StreamItem.Foul.KEY_PLAYER
-									+ "\" is not a player object", e);
+					throw new FoulItemFormatException("field \""
+							+ HandballTickerStream.StreamItem.Foul.KEY_PLAYER
+							+ "\" is not a player object", e);
 				}
 			} else {
 				throw new FoulItemFormatException("field \""
@@ -198,19 +178,9 @@ public class FoulItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the disciplines field
-	 * 
-	 * @param object
-	 *            foul stream item object JSON object
-	 * @return list of disciplines for the player who fouled<br>
-	 *         <b>null</b> if field missing or array empty
-	 * @throws FoulItemFormatException
-	 *             if field malformed or not a JSON array
-	 */
-	private static List<Discipline> parseDisciplines(final JSONObject object)
+	private static List<Discipline> parseDisciplines(final JSONObject foulObject)
 			throws FoulItemFormatException {
-		final Object oDisciplines = object
+		final Object oDisciplines = foulObject
 				.get(HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES);
 		if (oDisciplines != null) {
 			if (oDisciplines instanceof JSONArray) {
@@ -239,40 +209,28 @@ public class FoulItem extends StreamItem {
 					return disciplines;
 				}
 			} else {
-				throw new FoulItemFormatException(
-						"field \""
-								+ HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES
-								+ "\" is malformed: \"" + oDisciplines
-								+ "\" is not a JSON array");
+				throw new FoulItemFormatException("field \""
+						+ HandballTickerStream.StreamItem.Foul.KEY_DISCIPLINES
+						+ "\" is malformed: \"" + oDisciplines
+						+ "\" is not a JSON array");
 			}
 		}
 
 		return null;
 	}
 
-	/**
-	 * parse the victim field
-	 * 
-	 * @param object
-	 *            foul stream item object JSON object
-	 * @return player who has been fouled<br>
-	 *         <b>null</b> if field missing
-	 * @throws FoulItemFormatException
-	 *             if field malformed or not a player object
-	 */
-	private static Player parseVictim(final JSONObject object)
+	private static Player parseVictim(final JSONObject foulObject)
 			throws FoulItemFormatException {
-		final Object victim = object
+		final Object victim = foulObject
 				.get(HandballTickerStream.StreamItem.Foul.KEY_VICTIM);
 		if (victim != null) {
 			if (victim instanceof JSONObject) {
 				try {
-					return Player.parseJSON((JSONObject) victim);
+					return Player.loadFromJSON((JSONObject) victim);
 				} catch (final PlayerFormatException e) {
-					throw new FoulItemFormatException(
-							"field \""
-									+ HandballTickerStream.StreamItem.Foul.KEY_VICTIM
-									+ "\" is not a player object", e);
+					throw new FoulItemFormatException("field \""
+							+ HandballTickerStream.StreamItem.Foul.KEY_VICTIM
+							+ "\" is not a player object", e);
 				}
 			} else {
 				throw new FoulItemFormatException("field \""

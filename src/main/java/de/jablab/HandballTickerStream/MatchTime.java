@@ -69,11 +69,6 @@ public class MatchTime extends Streamable {
 	}
 
 	@Override
-	public String toJSONString() {
-		return this.toJSON().toJSONString();
-	}
-
-	@Override
 	public boolean equals(final Object o) {
 		if (o == null) {
 			return false;
@@ -90,54 +85,27 @@ public class MatchTime extends Streamable {
 				.getPhase()));
 	}
 
-	/**
-	 * load match time from JSON
-	 * 
-	 * @param jsonString
-	 *            match time JSON
-	 * @throws MatchTimeFormatException
-	 *             if the JSON is not a valid match time object
-	 */
 	public static MatchTime parseJSON(final String jsonString)
 			throws MatchTimeFormatException {
-		JSONObject matchTime;
-		try {
-			matchTime = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		final JSONObject matchTimeObject = parseJSONObject(jsonString);
+		if (matchTimeObject != null) {
+			return loadFromJSON(matchTimeObject);
+		} else {
 			throw new MatchTimeFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
-
-		return parseJSON(matchTime);
 	}
 
-	/**
-	 * load match time from JSON object
-	 * 
-	 * @param matchTime
-	 *            match time JSON object
-	 * @throws MatchTimeFormatException
-	 *             if the JSON object is not a valid match time object
-	 */
-	static MatchTime parseJSON(final JSONObject matchTime)
+	public static MatchTime loadFromJSON(final JSONObject matchTimeObject)
 			throws MatchTimeFormatException {
-		final int minute = parseMinute(matchTime);
-		final MatchPhase phase = parsePhase(matchTime);
+		final int minute = parseMinute(matchTimeObject);
+		final MatchPhase phase = parsePhase(matchTimeObject);
 		return new MatchTime(minute, phase);
 	}
 
-	/**
-	 * parse the minute field
-	 * 
-	 * @param matchTime
-	 *            match time JSON object
-	 * @return minute of the match
-	 * @throws MatchTimeFormatException
-	 *             if field missing or malformed
-	 */
-	private static int parseMinute(final JSONObject matchTime)
+	private static int parseMinute(final JSONObject matchTimeObject)
 			throws MatchTimeFormatException {
-		final String sMinute = (String) matchTime
+		final String sMinute = (String) matchTimeObject
 				.get(HandballTickerStream.MatchTime.KEY_MINUTE);
 		if (sMinute != null) {
 			try {
@@ -155,18 +123,9 @@ public class MatchTime extends Streamable {
 		}
 	}
 
-	/**
-	 * parse the phase field
-	 * 
-	 * @param matchTime
-	 *            match time JSON object
-	 * @return phase the match is in
-	 * @throws MatchTimeFormatException
-	 *             if field missing or malformed
-	 */
-	private static MatchPhase parsePhase(final JSONObject matchTime)
+	private static MatchPhase parsePhase(final JSONObject matchTimeObject)
 			throws MatchTimeFormatException {
-		final String sMatchPhase = (String) matchTime
+		final String sMatchPhase = (String) matchTimeObject
 				.get(HandballTickerStream.MatchTime.KEY_PHASE);
 		if (sMatchPhase != null) {
 			final MatchPhase phase = MatchPhase.parseString(sMatchPhase);

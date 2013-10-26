@@ -95,11 +95,6 @@ public class Team extends Streamable {
 		return object;
 	}
 
-	@Override
-	public String toJSONString() {
-		return this.toJSON().toJSONString();
-	}
-
 	/**
 	 * load team from JSON
 	 * 

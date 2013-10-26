@@ -36,7 +36,7 @@ public class PlayerTest extends StreamableTest {
 
 	private void loadPlayer(final boolean error) {
 		try {
-			this.player = Player.parseJSON(this.sourceObject);
+			this.player = Player.loadFromJSON(this.sourceObject);
 		} catch (final PlayerFormatException e) {
 			this.setErrTrace(e.getMessage());
 		}

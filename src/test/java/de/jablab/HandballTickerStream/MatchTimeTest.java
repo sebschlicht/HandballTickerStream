@@ -33,7 +33,7 @@ public class MatchTimeTest extends StreamableTest {
 
 	private void loadMatchTime(final boolean error) {
 		try {
-			this.matchTime = MatchTime.parseJSON(this.sourceObject);
+			this.matchTime = MatchTime.loadFromJSON(this.sourceObject);
 		} catch (final MatchTimeFormatException e) {
 			this.setErrTrace(e.getMessage());
 		}

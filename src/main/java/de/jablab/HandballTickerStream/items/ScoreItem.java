@@ -138,40 +138,32 @@ public class ScoreItem extends StreamItem {
 		return object;
 	}
 
-	/**
-	 * load a score stream item from JSON
-	 * 
-	 * @param jsonString
-	 *            score stream item JSON
-	 * @throws ScoreItemFormatException
-	 *             if the JSON is not a valid score stream item object
-	 * @throws StreamItemFormatException
-	 *             if the JSON is not a valid stream item object
-	 */
 	public static ScoreItem parseJSON(final String jsonString)
 			throws StreamItemFormatException {
-		JSONObject scoreStreamItem;
-		try {
-			scoreStreamItem = (JSONObject) JSON_PARSER.parse(jsonString);
-		} catch (org.json.simple.parser.ParseException e) {
+		final JSONObject scoreItem = parseJSONObject(jsonString);
+		if (scoreItem != null) {
+			return loadFromJSON(scoreItem);
+		} else {
 			throw new StreamItemFormatException("\"" + jsonString
 					+ "\" is not a JSON String");
 		}
+	}
 
-		final StreamItemInformation streamItemInformation = StreamItem
-				.parseStreamItemJSON(scoreStreamItem);
-		final JSONObject object = streamItemInformation.getObject();
+	public static ScoreItem loadFromJSON(final JSONObject streamItem)
+			throws StreamItemFormatException {
+		final StreamItemInformation streamItemInfo = loadStreamItemInformation(streamItem);
 
-		if (streamItemInformation.getType() == StreamItemType.SCORE) {
-			final Score score = parseScore(object);
-			final TeamRole team = parseTeamRole(object);
-			final ScoringType type = parseScoringType(object);
-			final Player player = parsePlayer(object);
+		if (streamItemInfo.getType() == StreamItemType.SCORE) {
+			final JSONObject scoreObject = streamItemInfo.getObject();
 
-			return new ScoreItem(streamItemInformation.getPublished(),
-					streamItemInformation.getTime(),
-					streamItemInformation.getMessage(), score, team, type,
-					player);
+			final Score score = parseScore(scoreObject);
+			final TeamRole team = parseTeamRole(scoreObject);
+			final ScoringType type = parseScoringType(scoreObject);
+			final Player player = parsePlayer(scoreObject);
+
+			return new ScoreItem(streamItemInfo.getPublished(),
+					streamItemInfo.getTime(), streamItemInfo.getMessage(),
+					score, team, type, player);
 		} else {
 			throw new ScoreItemFormatException("field \""
 					+ HandballTickerStream.StreamItem.KEY_TYPE
@@ -179,23 +171,14 @@ public class ScoreItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the score field
-	 * 
-	 * @param object
-	 *            score stream item object JSON object
-	 * @return new score
-	 * @throws ScoreItemFormatException
-	 *             if field missing, malformed or not a score object
-	 */
-	private static Score parseScore(final JSONObject object)
+	private static Score parseScore(final JSONObject scoreObject)
 			throws ScoreItemFormatException {
-		final Object score = object
+		final Object score = scoreObject
 				.get(HandballTickerStream.StreamItem.ScoreItem.KEY_SCORE);
 		if (score != null) {
 			if (score instanceof JSONObject) {
 				try {
-					return Score.parseJSON((JSONObject) score);
+					return Score.loadFromJSON((JSONObject) score);
 				} catch (final ScoreFormatException e) {
 					throw new ScoreItemFormatException(
 							"field \""
@@ -215,18 +198,9 @@ public class ScoreItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the team field
-	 * 
-	 * @param object
-	 *            score stream item object JSON object
-	 * @return role of the team scored
-	 * @throws ScoreItemFormatException
-	 *             if field missing or malformed
-	 */
-	private static TeamRole parseTeamRole(final JSONObject object)
+	private static TeamRole parseTeamRole(final JSONObject scoreObject)
 			throws ScoreItemFormatException {
-		final String sTeamRole = (String) object
+		final String sTeamRole = (String) scoreObject
 				.get(HandballTickerStream.StreamItem.ScoreItem.KEY_TEAM_ROLE);
 		if (sTeamRole != null) {
 			final TeamRole team = TeamRole.parseString(sTeamRole);
@@ -246,19 +220,9 @@ public class ScoreItem extends StreamItem {
 		}
 	}
 
-	/**
-	 * parse the type field
-	 * 
-	 * @param object
-	 *            score stream item object JSON object
-	 * @return type of the scoring<br>
-	 *         <b>null</b> if field missing
-	 * @throws ScoreItemFormatException
-	 *             if field malformed
-	 */
-	private static ScoringType parseScoringType(final JSONObject object)
+	private static ScoringType parseScoringType(final JSONObject scoreObject)
 			throws ScoreItemFormatException {
-		final String sScoringType = (String) object
+		final String sScoringType = (String) scoreObject
 				.get(HandballTickerStream.StreamItem.ScoreItem.KEY_TYPE);
 		if (sScoringType != null) {
 			final ScoringType scoringType = ScoringType
@@ -276,24 +240,14 @@ public class ScoreItem extends StreamItem {
 		return null;
 	}
 
-	/**
-	 * parse the player field
-	 * 
-	 * @param object
-	 *            score stream item object JSON object
-	 * @return player who scored<br>
-	 *         <b>null</b> if field missing
-	 * @throws ScoreItemFormatException
-	 *             if field malformed or not a player object
-	 */
-	private static Player parsePlayer(final JSONObject object)
+	private static Player parsePlayer(final JSONObject scoreObject)
 			throws ScoreItemFormatException {
-		final Object player = object
+		final Object player = scoreObject
 				.get(HandballTickerStream.StreamItem.ScoreItem.KEY_PLAYER);
 		if (player != null) {
 			if (player instanceof JSONObject) {
 				try {
-					return Player.parseJSON((JSONObject) player);
+					return Player.loadFromJSON((JSONObject) player);
 				} catch (final PlayerFormatException e) {
 					throw new ScoreItemFormatException(
 							"field \""
